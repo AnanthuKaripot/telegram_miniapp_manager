@@ -135,21 +135,36 @@
         }
 
         .explanation-text {
-            font-size: 1rem;
+            font-size: 0.95rem;
             opacity: 0.9;
-            line-height: 1.5;
+            line-height: 1.6;
+            overflow-y: auto;
+            max-height: 250px;
+            padding-right: 5px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+
+        .explanation-text::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .explanation-text::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
         }
 
         .controls {
-            padding: 20px;
+            padding: 10px 20px 0px 20px;
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             z-index: 10;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s;
+            box-sizing: border-box;
         }
 
         .controls.visible {
@@ -162,8 +177,10 @@
             font-size: 0.85rem;
             color: var(--accent);
             opacity: 0.6;
-            margin-top: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
             display: none;
+            width: 100%;
         }
 
         .instruction-hint.visible {
@@ -173,13 +190,15 @@
         .btn {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 15px 30px;
+            padding: 12px 0;
             border-radius: 30px;
             color: white;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            min-width: 120px;
+            flex: 1;
+            max-width: 160px;
+            font-size: 0.95rem;
         }
 
         .btn:active {
