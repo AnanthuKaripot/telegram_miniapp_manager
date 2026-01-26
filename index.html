@@ -190,15 +190,27 @@
         .btn {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 12px 0;
+            padding: 12px 30px;
             border-radius: 30px;
             color: white;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.95rem;
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .controls .btn {
             flex: 1;
             max-width: 160px;
-            font-size: 0.95rem;
+            padding: 12px 0;
+        }
+
+        .complete-screen .btn {
+            min-width: 200px;
+            margin-top: 20px;
         }
 
         .btn:active {
@@ -258,7 +270,6 @@
     <div class="complete-screen" id="completeScreen">
         <h1>🎉 Session Complete!</h1>
         <p>You reviewed 5 cards.</p>
-        <br>
         <button class="btn" onclick="Telegram.WebApp.close()">Close</button>
     </div>
 
