@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>PG PathScheduler Flashcards</title>
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #22d3ee;
+            --gold: #fbbf24;
+            --text: #f8fafc;
+            --success: #34d399;
+            --error: #f87171;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: var(--accent);
+            z-index: 10;
+        }
+
+        .card-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            perspective: 1000px;
+            padding: 20px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            max-width: 350px;
+            max-height: 550px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 25px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .front {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .back {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            transform: rotateY(180deg);
+        }
+
+        .subject-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .tap-hint {
+            position: absolute;
+            bottom: 30px;
+            opacity: 0.4;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .answer-label {
+            color: var(--success);
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        .answer-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .explanation-container {
+            width: 100%;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 15px;
+            overflow-y: auto;
+            max-height: 220px;
+            scrollbar-width: thin;
+        }
+
+        .explanation-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .explanation-text {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .controls {
+            padding: 15px 20px 30px 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 20px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .btn-nav {
+            max-width: 100px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-status {
+            background: rgba(34, 211, 238, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Loading State */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.1rem;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .complete-screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .complete-screen h1 {
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .complete-screen p {
+            opacity: 0.7;
+            margin-bottom: 30px;
+        }
+
+        #prevBtn {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #prevBtn.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <div class="header">
+            <div id="prevHeaderBtn" style="cursor: pointer; font-size: 1.2rem;" onclick="prevCard()">←</div>
+            <div class="title">DAILY FLASHCARDS</div>
+            <div id="counter">1/5</div>
+        </div>
+
+        <div class="card-container" id="cardContainer">
+            <div class="loading">
+                <div style="margin-bottom: 15px;">⚡</div>
+                Loading Your Session...
+            </div>
+        </div>
+
+        <div class="controls" id="controls">
+            <button class="btn btn-nav" id="prevBtn" onclick="prevCard()">Back</button>
+            <button class="btn btn-status" id="flipBtn" onclick="toggleFlip()">Flip Card</button>
+            <button class="btn btn-nav" id="nextBtn" onclick="nextCard()">Next</button>
+        </div>
+    </div>
+
+    <div class="complete-screen" id="completeScreen">
+        <div style="font-size: 4rem; margin-bottom: 20px;">🏆</div>
+        <h1>Great Job!</h1>
+        <p>You've completed your daily study goal.</p>
+        <button class="btn" style="max-width: 200px;" onclick="Telegram.WebApp.close()">Done</button>
+    </div>
+
+    <script>
+        let cards = [];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        // Init Telegram
+        const tg = window.Telegram.WebApp;
+        if (tg) {
+            tg.expand();
+            tg.ready();
+        }
+
+        async function init() {
+            try {
+                // Fetch generated JSON
+                const response = await fetch('./daily_flashcards.json?' + new Date().getTime());
+                if (!response.ok) throw new Error("Failed to load cards");
+
+                const data = await response.json();
+                cards = data.cards;
+
+                if (cards && cards.length > 0) {
+                    renderCard(currentIndex);
+                    const loading = document.querySelector('.loading');
+                    if (loading) loading.remove();
+                } else {
+                    document.querySelector('.loading').textContent = "Refresh later for new cards!";
+                }
+            } catch (e) {
+                console.error(e);
+                const loading = document.querySelector('.loading');
+                if (loading) loading.textContent = "Unable to load cards. Please check connection.";
+            }
+        }
+
+        function renderCard(index) {
+            isFlipped = false;
+            const card = cards[index];
+            const container = document.getElementById('cardContainer');
+
+            // Update UI State
+            document.getElementById('counter').innerText = `${index + 1}/${cards.length}`;
+
+            // Nav Button Visibility
+            const prevBtn = document.getElementById('prevBtn');
+            const prevHeader = document.getElementById('prevHeaderBtn');
+            if (index > 0) {
+                prevBtn.classList.add('visible');
+                prevBtn.disabled = false;
+                prevHeader.style.visibility = 'visible';
+            } else {
+                prevBtn.classList.remove('visible');
+                prevBtn.disabled = true;
+                prevHeader.style.visibility = 'hidden';
+            }
+
+            const nextBtnText = (index === cards.length - 1) ? "Finish" : "Next";
+            document.getElementById('nextBtn').innerText = nextBtnText;
+
+            // Generate Content
+            container.innerHTML = `
+                <div class="flashcard" id="flashcard" onclick="toggleFlip()">
+                    <div class="face front">
+                        <div class="subject-badge">${card.subject}</div>
+                        <div class="question-text">${card.question}</div>
+                        <div class="tap-hint">TAP TO FLIP</div>
+                    </div>
+                    <div class="face back">
+                        <div class="answer-label">CORRECT ANSWER</div>
+                        <div class="answer-text">${card.answer}</div>
+                        <div class="explanation-container">
+                            <div class="explanation-title">EXPLANATION</div>
+                            <div class="explanation-text">${card.explanation}</div>
+                        </div>
+                        <div class="tap-hint">TAP TO FLIP BACK</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleFlip() {
+            const el = document.getElementById('flashcard');
+            if (!el) return;
+
+            isFlipped = !isFlipped;
+            el.classList.toggle('flipped');
+
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        function nextCard() {
+            if (currentIndex < cards.length - 1) {
+                currentIndex++;
+                renderCard(currentIndex);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            } else {
+                showComplete();
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCard(currentIndex);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        function showComplete() {
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('completeScreen').style.display = 'flex';
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        init();
+    </script>
+
+</body>
+
+</html>
