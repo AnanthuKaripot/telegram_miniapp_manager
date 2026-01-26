@@ -1,0 +1,55 @@
+{
+    "date": "2026-01-26",
+    "cards": [
+        {
+            "id": 440,
+            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_front.png",
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_back.png",
+            "question": "A stress fracture of the 2nd or 3rd metatarsal is commonly known as?",
+            "answer": "March Fracture",
+            "explanation": "Commonly seen in soldiers or long-distance hikers due to repetitive stress on the forefoot.",
+            "subject": "Orthopaedics"
+        },
+        {
+            "id": 578,
+            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_front.png",
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_back.png",
+            "question": "Which enzyme is the rate-limiting step of 'Bile Acid Synthesis'?",
+            "answer": "7-alpha-hydroxylase",
+            "explanation": "It converts cholesterol into 7-alpha-hydroxycholesterol. It is inhibited by bile acids (feedback inhibition) and requires Vitamin C as a cofactor.",
+            "subject": "Biochemistry"
+        },
+        {
+            "id": 677,
+            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_front.png",
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_back.png",
+            "question": "What is the primary site of 'Iron' absorption in the gastrointestinal tract?",
+            "answer": "Duodenum and upper Jejunum",
+            "explanation": "Iron is absorbed primarily in the ferrous ($Fe^{2+}$) state. Vitamin C (ascorbic acid) enhances absorption by maintaining iron in the reduced state.",
+            "subject": "Physiology"
+        },
+        {
+            "id": 816,
+            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_front.png",
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_back.png",
+            "question": "What are the boundaries of the 'Triangle of Grynfelt'?",
+            "answer": "12th rib (superior), Internal Oblique (lateral), and Erector Spinae (medial)",
+            "explanation": "It is the site for a Superior Lumbar Hernia. The floor is the aponeurosis of the Transversus Abdominis.",
+            "subject": "Anatomy"
+        },
+        {
+            "id": 47,
+            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_front.png",
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_back.png",
+            "question": "Which specific cell type in the alveoli is responsible for secreting surfactant?",
+            "answer": "Type II Pneumocytes",
+            "explanation": "Type II pneumocytes produce surfactant (dipalmitoylphosphatidylcholine), which reduces surface tension and prevents alveolar collapse. They also act as stem cells for Type I pneumocytes.",
+            "subject": "Physiology"
+        }
+    ]
+}
