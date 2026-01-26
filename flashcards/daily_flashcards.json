@@ -2,49 +2,49 @@
     "date": "2026-01-26",
     "cards": [
         {
-            "id": 832,
+            "id": 423,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_back.png",
-            "question": "What is 'Lace-like' or 'Reticulated' post-mortem staining characteristic of?",
-            "answer": "Cyanide Poisoning (or sometimes cold exposure)",
-            "explanation": "Classic cyanide staining is cherry-red, but a lace-like pattern can also be seen. It results from the high oxygen content of venous blood.",
-            "subject": "Forensic Medicine"
+            "question": "What is the name of the skeletal finding in Vitamin D deficiency where the costochondral junctions are enlarged?",
+            "answer": "Rickety Rosary",
+            "explanation": "Seen in active Rickets. It represents expansion of the osteoid tissue at the junction.",
+            "subject": "Pediatrics"
         },
         {
-            "id": 139,
+            "id": 203,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_back.png",
-            "question": "What is the characteristic cell seen in Hodgkin Lymphoma?",
-            "answer": "Reed-Sternberg cell",
-            "explanation": "Reed-Sternberg cells are large, binucleated cells with prominent nucleoli, famously described as having an 'owl-eye' appearance.",
+            "question": "Which lung cancer is most strongly associated with non-smokers?",
+            "answer": "Adenocarcinoma",
+            "explanation": "While smoking increases risk for all, Adenocarcinoma is the most common type found in non-smokers and women.",
             "subject": "Pathology"
         },
         {
-            "id": 632,
+            "id": 394,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_back.png",
-            "question": "What is 'Puppe\u2019s Law' (Traverse\u2019s Law)?",
-            "answer": "A later skull fracture line will not cross a pre-existing fracture line",
-            "explanation": "Used to determine the sequence of multiple blows to the head. The second fracture ends where it meets the first.",
-            "subject": "Forensic Medicine"
+            "question": "What is 'Bezold's Abscess'?",
+            "answer": "A complication of Mastoiditis where pus tracks into the Sternocleidomastoid muscle",
+            "explanation": "It results from the erosion of the mastoid tip, causing a deep neck swelling.",
+            "subject": "ENT"
         },
         {
-            "id": 586,
+            "id": 759,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_back.png",
-            "question": "What are the three signs of 'Placental Separation' during the third stage of labor?",
-            "answer": "Gush of blood, Lengthening of the umbilical cord, and Globular rise of the uterus",
-            "explanation": "Once these signs are seen, Controlled Cord Traction (CCT) is performed to deliver the placenta.",
-            "subject": "Obstetrics & Gynae"
+            "question": "What is 'Waterhouse-Friderichsen Syndrome'?",
+            "answer": "Adrenal gland failure due to massive hemorrhage",
+            "explanation": "Typically caused by severe Meningococcemia (Neisseria meningitidis), leading to DIC and shock.",
+            "subject": "Pathology"
         },
         {
-            "id": 695,
+            "id": 195,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_back.png",
-            "question": "Which nerve is at risk in a 'Surgical Neck' fracture of the humerus?",
-            "answer": "Axillary Nerve",
-            "explanation": "The axillary nerve winds around the surgical neck. Injury leads to deltoid paralysis and sensation loss over the regimental badge area.",
-            "subject": "Anatomy"
+            "question": "What is the characteristic appearance of 'Molluscum Contagiosum' lesions?",
+            "answer": "Umbilicated pearly papules",
+            "explanation": "Caused by a Poxvirus. Histology shows 'Henderson-Paterson bodies' which are intracytoplasmic inclusions.",
+            "subject": "Dermatology"
         }
     ]
 }
