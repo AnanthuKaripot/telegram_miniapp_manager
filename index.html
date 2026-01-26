@@ -14,6 +14,8 @@
             --accent: #22d3ee;
             --gold: #fbbf24;
             --text: #f8fafc;
+            --success: #34d399;
+            --error: #f87171;
         }
 
         body {
@@ -39,7 +41,9 @@
 
         .header {
             padding: 15px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-weight: bold;
             color: var(--accent);
             z-index: 10;
@@ -96,137 +100,121 @@
             transform: rotateY(180deg);
         }
 
-        .streak-badge {
+        .subject-badge {
             position: absolute;
             top: 20px;
             right: 20px;
             background: rgba(255, 255, 255, 0.1);
-            padding: 5px 10px;
+            padding: 5px 12px;
             border-radius: 12px;
-            font-size: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             color: var(--gold);
+            font-weight: bold;
         }
 
         .question-text {
             font-size: 1.3rem;
             line-height: 1.5;
             margin-bottom: 20px;
+            font-weight: 500;
         }
 
         .tap-hint {
             position: absolute;
             bottom: 30px;
-            opacity: 0.5;
-            font-size: 0.9rem;
+            opacity: 0.4;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
 
         .answer-label {
-            color: var(--accent);
+            color: var(--success);
             font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
         }
 
         .answer-text {
             font-size: 1.4rem;
             font-weight: bold;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .explanation-container {
+            width: 100%;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 15px;
+            overflow-y: auto;
+            max-height: 220px;
+            scrollbar-width: thin;
+        }
+
+        .explanation-title {
+            font-size: 0.75rem;
+            font-weight: bold;
             color: var(--gold);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
 
         .explanation-text {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             opacity: 0.9;
             line-height: 1.6;
-            overflow-y: auto;
-            max-height: 250px;
-            padding-right: 5px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent) transparent;
-        }
-
-        .explanation-text::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .explanation-text::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 10px;
         }
 
         .controls {
-            padding: 10px 20px 0px 20px;
+            padding: 15px 20px 30px 20px;
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             z-index: 10;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
             box-sizing: border-box;
-        }
-
-        .controls.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .instruction-hint {
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--accent);
-            opacity: 0.6;
-            margin-top: 5px;
-            margin-bottom: 20px;
-            display: none;
-            width: 100%;
-        }
-
-        .instruction-hint.visible {
-            display: block;
         }
 
         .btn {
             background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 12px 30px;
-            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 20px;
+            border-radius: 15px;
             color: white;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.95rem;
-            display: inline-block;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        .controls .btn {
+            font-size: 0.9rem;
             flex: 1;
-            max-width: 160px;
-            padding: 12px 0;
-        }
-
-        .complete-screen .btn {
-            min-width: 200px;
-            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn:active {
             transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .btn.mastered {
-            background: rgba(34, 197, 94, 0.2);
-            border-color: #22c55e;
-            color: #22c55e;
+        .btn:disabled {
+            opacity: 0.3;
+            pointer-events: none;
         }
 
-        .btn.review {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: #ef4444;
-            color: #ef4444;
+        .btn-nav {
+            max-width: 100px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-status {
+            background: rgba(34, 211, 238, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         /* Loading State */
@@ -235,8 +223,9 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--accent);
+            text-align: center;
         }
 
         .complete-screen {
@@ -246,7 +235,26 @@
             align-items: center;
             height: 100%;
             text-align: center;
-            padding: 30px;
+            padding: 40px;
+        }
+
+        .complete-screen h1 {
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .complete-screen p {
+            opacity: 0.7;
+            margin-bottom: 30px;
+        }
+
+        #prevBtn {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #prevBtn.visible {
+            opacity: 1;
         }
     </style>
 </head>
@@ -254,114 +262,147 @@
 <body>
 
     <div id="app">
-        <div class="header">Daily Dose • <span id="counter">1/5</span></div>
+        <div class="header">
+            <div id="prevHeaderBtn" style="cursor: pointer; font-size: 1.2rem;" onclick="prevCard()">←</div>
+            <div class="title">DAILY FLASHCARDS</div>
+            <div id="counter">1/5</div>
+        </div>
 
         <div class="card-container" id="cardContainer">
-            <div class="loading">Loading Flashcards...</div>
+            <div class="loading">
+                <div style="margin-bottom: 15px;">⚡</div>
+                Loading Your Session...
+            </div>
         </div>
 
         <div class="controls" id="controls">
-            <button class="btn review" onclick="nextCard(false)">Hard 😥</button>
-            <button class="btn mastered" onclick="nextCard(true)">Easy 🤩</button>
+            <button class="btn btn-nav" id="prevBtn" onclick="prevCard()">Back</button>
+            <button class="btn btn-status" id="flipBtn" onclick="toggleFlip()">Flip Card</button>
+            <button class="btn btn-nav" id="nextBtn" onclick="nextCard()">Next</button>
         </div>
-        <div class="instruction-hint" id="instructionHint">Click any button to continue</div>
     </div>
 
     <div class="complete-screen" id="completeScreen">
-        <h1>🎉 Session Complete!</h1>
-        <p>You reviewed 5 cards.</p>
-        <button class="btn" onclick="Telegram.WebApp.close()">Close</button>
+        <div style="font-size: 4rem; margin-bottom: 20px;">🏆</div>
+        <h1>Great Job!</h1>
+        <p>You've completed your daily study goal.</p>
+        <button class="btn" style="max-width: 200px;" onclick="Telegram.WebApp.close()">Done</button>
     </div>
 
     <script>
         let cards = [];
         let currentIndex = 0;
+        let isFlipped = false;
 
         // Init Telegram
         const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
+        if (tg) {
+            tg.expand();
+            tg.ready();
+        }
 
         async function init() {
             try {
                 // Fetch generated JSON
-                // Assumption: This file is at ../output/daily_flashcards.json relative to this index.html
-                // On GitHub Pages: /flashcard_pipeline/web_app/index.html -> ../output/ -> /flashcard_pipeline/output/
                 const response = await fetch('./daily_flashcards.json?' + new Date().getTime());
                 if (!response.ok) throw new Error("Failed to load cards");
 
                 const data = await response.json();
                 cards = data.cards;
 
-                if (cards.length > 0) {
+                if (cards && cards.length > 0) {
                     renderCard(currentIndex);
-                    document.querySelector('.loading')?.remove();
+                    const loading = document.querySelector('.loading');
+                    if (loading) loading.remove();
                 } else {
-                    document.querySelector('.loading').textContent = "No cards for today!";
+                    document.querySelector('.loading').textContent = "Refresh later for new cards!";
                 }
             } catch (e) {
                 console.error(e);
-                document.querySelector('.loading').textContent = "Error loading cards.";
+                const loading = document.querySelector('.loading');
+                if (loading) loading.textContent = "Unable to load cards. Please check connection.";
             }
         }
 
         function renderCard(index) {
-            if (index >= cards.length) {
-                showComplete();
-                return;
-            }
-
+            isFlipped = false;
             const card = cards[index];
             const container = document.getElementById('cardContainer');
-            const controls = document.getElementById('controls');
 
-            // Reset Logic
-            controls.classList.remove('visible');
-            document.getElementById('instructionHint').classList.remove('visible');
-
-            // Update Counter
+            // Update UI State
             document.getElementById('counter').innerText = `${index + 1}/${cards.length}`;
 
-            // Create HTML
+            // Nav Button Visibility
+            const prevBtn = document.getElementById('prevBtn');
+            const prevHeader = document.getElementById('prevHeaderBtn');
+            if (index > 0) {
+                prevBtn.classList.add('visible');
+                prevBtn.disabled = false;
+                prevHeader.style.visibility = 'visible';
+            } else {
+                prevBtn.classList.remove('visible');
+                prevBtn.disabled = true;
+                prevHeader.style.visibility = 'hidden';
+            }
+
+            const nextBtnText = (index === cards.length - 1) ? "Finish" : "Next";
+            document.getElementById('nextBtn').innerText = nextBtnText;
+
+            // Generate Content
             container.innerHTML = `
-            <div class="flashcard" id="flashcard" onclick="flipCard(this)">
-                <div class="face front">
-                    <div class="streak-badge">${card.subject}</div>
-                    <div class="question-text">${card.question}</div>
-                    <div class="tap-hint">Tap to see answer</div>
+                <div class="flashcard" id="flashcard" onclick="toggleFlip()">
+                    <div class="face front">
+                        <div class="subject-badge">${card.subject}</div>
+                        <div class="question-text">${card.question}</div>
+                        <div class="tap-hint">TAP TO FLIP</div>
+                    </div>
+                    <div class="face back">
+                        <div class="answer-label">CORRECT ANSWER</div>
+                        <div class="answer-text">${card.answer}</div>
+                        <div class="explanation-container">
+                            <div class="explanation-title">EXPLANATION</div>
+                            <div class="explanation-text">${card.explanation}</div>
+                        </div>
+                        <div class="tap-hint">TAP TO FLIP BACK</div>
+                    </div>
                 </div>
-                <div class="face back">
-                    <div class="answer-label">ANSWER</div>
-                    <div class="answer-text">${card.options[card.correct_index]}</div>
-                    <div class="explanation-text">${card.explanation}</div>
-                </div>
-            </div>
-        `;
+            `;
         }
 
-        function flipCard(el) {
-            if (el.classList.contains('flipped')) return;
+        function toggleFlip() {
+            const el = document.getElementById('flashcard');
+            if (!el) return;
 
-            el.classList.add('flipped');
-            document.getElementById('controls').classList.add('visible');
-            document.getElementById('instructionHint').classList.add('visible');
-            tg.HapticFeedback.impactOccurred('light');
+            isFlipped = !isFlipped;
+            el.classList.toggle('flipped');
+
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
         }
 
-        function nextCard(isEasy) {
-            currentIndex++;
-            if (currentIndex < cards.length) {
-                tg.HapticFeedback.impactOccurred('medium');
+        function nextCard() {
+            if (currentIndex < cards.length - 1) {
+                currentIndex++;
                 renderCard(currentIndex);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             } else {
                 showComplete();
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCard(currentIndex);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             }
         }
 
         function showComplete() {
             document.getElementById('app').style.display = 'none';
             document.getElementById('completeScreen').style.display = 'flex';
-            tg.HapticFeedback.notificationOccurred('success');
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
 
         init();
