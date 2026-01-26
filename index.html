@@ -147,6 +147,14 @@
             justify-content: center;
             gap: 20px;
             z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .controls.visible {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .btn {
@@ -208,7 +216,7 @@
             <div class="loading">Loading Flashcards...</div>
         </div>
 
-        <div class="controls" id="controls" style="opacity: 0.3; pointer-events: none;">
+        <div class="controls" id="controls">
             <button class="btn review" onclick="nextCard(false)">Hard 😥</button>
             <button class="btn mastered" onclick="nextCard(true)">Easy 🤩</button>
         </div>
@@ -228,7 +236,11 @@
         // Init Telegram
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.MainButton.text = "Next Card";
+        tg.ready();
+
+        // Main Button Setup
+        tg.MainButton.setText("NEXT CARD");
+        tg.MainButton.onClick(() => nextCard(true));
 
         async function init() {
             try {
@@ -243,15 +255,13 @@
 
                 if (cards.length > 0) {
                     renderCard(currentIndex);
-                    document.querySelector('.loading').remove();
-                    document.getElementById('controls').style.opacity = '1';
-                    document.getElementById('controls').style.pointerEvents = 'auto';
+                    document.querySelector('.loading')?.remove();
                 } else {
                     document.querySelector('.loading').textContent = "No cards for today!";
                 }
             } catch (e) {
                 console.error(e);
-                document.querySelector('.loading').textContent = "Error loading cards. Please try again later.";
+                document.querySelector('.loading').textContent = "Error loading cards.";
             }
         }
 
@@ -263,13 +273,18 @@
 
             const card = cards[index];
             const container = document.getElementById('cardContainer');
+            const controls = document.getElementById('controls');
+
+            // Reset Logic
+            controls.classList.remove('visible');
+            tg.MainButton.hide();
 
             // Update Counter
             document.getElementById('counter').innerText = `${index + 1}/${cards.length}`;
 
             // Create HTML
             container.innerHTML = `
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard" id="flashcard" onclick="flipCard(this)">
                 <div class="face front">
                     <div class="streak-badge">${card.subject}</div>
                     <div class="question-text">${card.question}</div>
@@ -284,19 +299,29 @@
         `;
         }
 
-        function nextCard(isEasy) {
-            // Logic to save progress locally could go here (localStorage)
-            if (isEasy) {
-                // Animation or logic for easy
-            }
+        function flipCard(el) {
+            if (el.classList.contains('flipped')) return;
 
+            el.classList.add('flipped');
+            document.getElementById('controls').classList.add('visible');
+            tg.MainButton.show();
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function nextCard(isEasy) {
             currentIndex++;
-            renderCard(currentIndex);
+            if (currentIndex < cards.length) {
+                tg.HapticFeedback.impactOccurred('medium');
+                renderCard(currentIndex);
+            } else {
+                showComplete();
+            }
         }
 
         function showComplete() {
             document.getElementById('app').style.display = 'none';
             document.getElementById('completeScreen').style.display = 'flex';
+            tg.MainButton.hide();
             tg.HapticFeedback.notificationOccurred('success');
         }
 
