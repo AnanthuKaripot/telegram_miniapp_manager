@@ -157,6 +157,19 @@
             pointer-events: auto;
         }
 
+        .instruction-hint {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--accent);
+            opacity: 0.6;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .instruction-hint.visible {
+            display: block;
+        }
+
         .btn {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -220,6 +233,7 @@
             <button class="btn review" onclick="nextCard(false)">Hard 😥</button>
             <button class="btn mastered" onclick="nextCard(true)">Easy 🤩</button>
         </div>
+        <div class="instruction-hint" id="instructionHint">Click any button to continue</div>
     </div>
 
     <div class="complete-screen" id="completeScreen">
@@ -237,10 +251,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
-
-        // Main Button Setup
-        tg.MainButton.setText("NEXT CARD");
-        tg.MainButton.onClick(() => nextCard(true));
 
         async function init() {
             try {
@@ -277,7 +287,7 @@
 
             // Reset Logic
             controls.classList.remove('visible');
-            tg.MainButton.hide();
+            document.getElementById('instructionHint').classList.remove('visible');
 
             // Update Counter
             document.getElementById('counter').innerText = `${index + 1}/${cards.length}`;
@@ -304,7 +314,7 @@
 
             el.classList.add('flipped');
             document.getElementById('controls').classList.add('visible');
-            tg.MainButton.show();
+            document.getElementById('instructionHint').classList.add('visible');
             tg.HapticFeedback.impactOccurred('light');
         }
 
@@ -321,7 +331,6 @@
         function showComplete() {
             document.getElementById('app').style.display = 'none';
             document.getElementById('completeScreen').style.display = 'flex';
-            tg.MainButton.hide();
             tg.HapticFeedback.notificationOccurred('success');
         }
 
