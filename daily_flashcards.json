@@ -1,0 +1,65 @@
+{
+    "date": "2026-01-26",
+    "cards": [
+        {
+            "subject": "Anatomy",
+            "question": "The parasympathetic supply to the otic ganglion comes from:",
+            "options": [
+                "7th cranial nerve",
+                "8th cranial nerve",
+                "9th cranial nerve",
+                "3rd cranial nerve"
+            ],
+            "correct_index": 2,
+            "explanation": "Concept: The otic ganglion is a parasympathetic ganglion located in the temporal bone. It receives fibers from the glossopharyngeal nerve (CN IX) and sends postganglionic fibers via the auriculotemporal nerve to supply parotid gland, and also carries sensory fibers from the tympanic membrane. Reasoning: The glossopharyngeal nerve (CN IX) carries the preganglionic parasympathetic fibers that synapse in the otic ganglion. These fibers originate from the inferior salivatory nucleus in the brainstem. Postganglionic fibers then travel with the auriculotemporal nerve (a branch of the mandibular nerve \u2013 a branch of CN V3) to reach the parotid gland, stimulating salivation. Therefore, the 9th cranial nerve is the correct answer. Why wrong: A. 7th cranial nerve: The facial nerve (CN VII) provides parasympathetic innervation to the submandibular and sublingual salivary glands via the submandibular ganglion, not the otic ganglion. B. 8th cranial nerve: The vestibulocochlear nerve (CN VIII) is a purely sensory nerve responsible for hearing and balance and has no parasympathetic function. D. 3rd cranial nerve: The oculomotor nerve (CN III) carries parasympathetic fibers to the ciliary ganglion, which innervates the pupillary constrictor and ciliary muscle of the eye. Key Takeaway: Remember the glossopharyngeal nerve (CN IX) is specifically associated with the otic ganglion and parotid gland innervation. Mnemonic: \"IX for eXtra saliva\" - helps remember CN IX innervates structures related to saliva (parotid gland)."
+        },
+        {
+            "subject": "Pediatrics",
+            "question": "The sudden onset of cough, stridor, and respiratory distress without fever is most suggestive of:",
+            "options": [
+                "Foreign body aspiration",
+                "Acute asthma",
+                "Aspiration pneumonia",
+                "Primary tuberculosis complex"
+            ],
+            "correct_index": 0,
+            "explanation": "Concept: This question tests your understanding of the differential diagnosis for acute respiratory distress in a patient, specifically focusing on scenarios without fever. The key clinical features are sudden onset cough, stridor, and respiratory distress. Reasoning: Foreign body aspiration classically presents with a sudden onset of symptoms \u2013 cough, stridor (a high-pitched whistling sound during breathing caused by airway narrowing), and respiratory distress. The absence of fever is a crucial clue, as infectious causes typically present with fever. The suddenness points away from chronic conditions like asthma. Why wrong: A. Acute asthma: While asthma can cause cough, stridor, and respiratory distress, the onset is usually more gradual, often triggered by allergens or exercise, and may be associated with a history of atopy. Fever is not a typical feature, but the suddenness makes it less likely than FBA. B. Aspiration pneumonia: Aspiration pneumonia usually presents with fever, cough (often productive), and potentially shortness of breath. The absence of fever makes this less likely. C. Primary tuberculosis complex: Tuberculosis has a more insidious onset, with symptoms like chronic cough, weight loss, and night sweats. It rarely presents with sudden stridor and respiratory distress, and fever is common. Key Takeaway: Sudden onset of cough, stridor, and respiratory distress without fever strongly suggests foreign body aspiration, especially in children. Always consider this possibility in the appropriate clinical context. Mnemonic: None"
+        },
+        {
+            "subject": "General Surgery",
+            "question": "Pascal's law is used in which technique of hernia repair?",
+            "options": [
+                "Lichtenstein mesh repair",
+                "Stoppa's preperitoneal repair",
+                "Bassini's repair",
+                "Darning repair"
+            ],
+            "correct_index": 1,
+            "explanation": "Concept: Pascal's Law states that pressure applied to a confined fluid is transmitted equally in all directions. In the context of hernia repair, this principle is utilized to create a uniform pressure distribution over the defect, facilitating mesh placement and optimal tissue approximation. Reasoning: Stoppa's preperitoneal repair specifically employs a balloon dissector inflated with fluid (typically saline). This inflation utilizes Pascal's Law to gently dissect the preperitoneal space, creating a pocket behind the abdominal muscles where the mesh is placed. The even pressure distribution minimizes injury to surrounding structures and allows for a tension-free repair. This is the defining characteristic linking this technique to Pascal's Law. Why wrong: Lichtenstein mesh repair: This is an open, tension-free repair using a mesh placed directly onto the defect. While effective, it doesn't fundamentally rely on fluid pressure distribution as described by Pascal's Law. Bassini's repair: This is a traditional open repair involving suturing the transversalis fascia to the internal oblique and inguinal ligament. It's a tissue-based repair and doesn't utilize fluid dynamics. Darning repair: This is an older technique involving suturing the edges of the defect together. It's also a tissue-based repair and doesn't involve Pascal's Law. Key Takeaway: Stoppa's repair is unique among these options because it directly applies the principles of Pascal's Law through the use of a balloon dissector to create the preperitoneal space. Mnemonic: 'Stoppa's uses 'pressure' to 'separate' \u2013 think Pascal's Law and fluid pressure."
+        },
+        {
+            "subject": "Pathology",
+            "question": "Vasodilation secondary to trauma is mediated by?",
+            "options": [
+                "Histamine",
+                "IL-2",
+                "TGF-\u00ce\u00b2",
+                "FGF"
+            ],
+            "correct_index": 0,
+            "explanation": "Concept: Trauma triggers an inflammatory response, leading to vasodilation as part of the body's attempt to increase blood flow to the injured area. This vasodilation is primarily mediated by several inflammatory mediators. Reasoning: Histamine is a key mediator of the inflammatory response. Released from mast cells and basophils in response to tissue damage, histamine binds to H1 receptors on vascular smooth muscle, causing relaxation and subsequent vasodilation. This is a rapid and significant response to trauma, contributing to redness, warmth, and edema at the injury site. Therefore, vasodilation secondary to trauma is directly mediated by histamine. Why wrong: IL-2 (Interleukin-2): IL-2 is a cytokine primarily involved in T-cell proliferation and immune regulation. While it plays a role in the later stages of inflammation and immune response, it's not a primary mediator of the immediate vasodilation seen after trauma. TGF-beta (Transforming Growth Factor beta): TGF-beta is involved in tissue repair and fibrosis. It generally has vasoconstrictive effects and is more important in the resolution phase of inflammation, not the initial vasodilation. FGF (Fibroblast Growth Factor): FGFs are involved in angiogenesis and wound healing, but they don't directly cause the rapid vasodilation observed immediately following trauma. Their effects are more long-term and related to tissue regeneration. Key Takeaway: Histamine is the primary mediator of immediate vasodilation in response to trauma due to its direct action on vascular smooth muscle. Mnemonic: 'H'istamine for 'H'emodynamic changes (vasodilation) in trauma."
+        },
+        {
+            "subject": "Pathology",
+            "question": "Which of the following is known as the \"guardian of the genome\"?",
+            "options": [
+                "p53",
+                "Mdm2",
+                "p14",
+                "ATM"
+            ],
+            "correct_index": 0,
+            "explanation": "Concept: The 'guardian of the genome' refers to a protein that plays a crucial role in maintaining genomic stability by responding to DNA damage. This involves cell cycle arrest, DNA repair, or apoptosis (programmed cell death) if the damage is irreparable. Reasoning: p53 is a tumor suppressor protein that is activated in response to various cellular stresses, most notably DNA damage. It functions as a transcription factor, upregulating genes involved in cell cycle arrest (allowing time for DNA repair), DNA repair mechanisms, and apoptosis. Its central role in preventing the proliferation of cells with damaged DNA earns it the title 'guardian of the genome'. Why wrong: Mdm2: Mdm2 is a negative regulator of p53. It's an E3 ubiquitin ligase that targets p53 for degradation, effectively turning off p53's tumor suppressor function. It doesn't guard the genome; it inhibits the guardian. p14: p14 (also known as p19ARF in humans) is involved in the p53 pathway, but it primarily functions to inhibit Mdm2, thereby stabilizing p53. It's an indirect activator of p53, not the primary guardian itself. ATM: ATM is a protein kinase that is activated by DNA double-strand breaks. It initiates a signaling cascade that leads to p53 activation, but it's an upstream activator, not the guardian itself. ATM alerts the guardian, but doesn't act as the guardian. Key Takeaway: p53 is the central regulator of cellular responses to DNA damage and is therefore rightfully called the 'guardian of the genome'. Understanding its role and the proteins that regulate it (like Mdm2 and ATM) is vital for understanding cancer biology. Mnemonic: 'p53 protects, prevents proliferation of problematic cells'"
+        }
+    ]
+}
