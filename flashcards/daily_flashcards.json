@@ -2,54 +2,49 @@
     "date": "2026-01-26",
     "cards": [
         {
-            "id": 440,
-            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_front.png",
+            "id": 832,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_back.png",
-            "question": "A stress fracture of the 2nd or 3rd metatarsal is commonly known as?",
-            "answer": "March Fracture",
-            "explanation": "Commonly seen in soldiers or long-distance hikers due to repetitive stress on the forefoot.",
-            "subject": "Orthopaedics"
+            "question": "What is 'Lace-like' or 'Reticulated' post-mortem staining characteristic of?",
+            "answer": "Cyanide Poisoning (or sometimes cold exposure)",
+            "explanation": "Classic cyanide staining is cherry-red, but a lace-like pattern can also be seen. It results from the high oxygen content of venous blood.",
+            "subject": "Forensic Medicine"
         },
         {
-            "id": 578,
-            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_front.png",
+            "id": 139,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_back.png",
-            "question": "Which enzyme is the rate-limiting step of 'Bile Acid Synthesis'?",
-            "answer": "7-alpha-hydroxylase",
-            "explanation": "It converts cholesterol into 7-alpha-hydroxycholesterol. It is inhibited by bile acids (feedback inhibition) and requires Vitamin C as a cofactor.",
-            "subject": "Biochemistry"
+            "question": "What is the characteristic cell seen in Hodgkin Lymphoma?",
+            "answer": "Reed-Sternberg cell",
+            "explanation": "Reed-Sternberg cells are large, binucleated cells with prominent nucleoli, famously described as having an 'owl-eye' appearance.",
+            "subject": "Pathology"
         },
         {
-            "id": 677,
-            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_front.png",
+            "id": 632,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_back.png",
-            "question": "What is the primary site of 'Iron' absorption in the gastrointestinal tract?",
-            "answer": "Duodenum and upper Jejunum",
-            "explanation": "Iron is absorbed primarily in the ferrous ($Fe^{2+}$) state. Vitamin C (ascorbic acid) enhances absorption by maintaining iron in the reduced state.",
-            "subject": "Physiology"
+            "question": "What is 'Puppe\u2019s Law' (Traverse\u2019s Law)?",
+            "answer": "A later skull fracture line will not cross a pre-existing fracture line",
+            "explanation": "Used to determine the sequence of multiple blows to the head. The second fracture ends where it meets the first.",
+            "subject": "Forensic Medicine"
         },
         {
-            "id": 816,
-            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_front.png",
+            "id": 586,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_back.png",
-            "question": "What are the boundaries of the 'Triangle of Grynfelt'?",
-            "answer": "12th rib (superior), Internal Oblique (lateral), and Erector Spinae (medial)",
-            "explanation": "It is the site for a Superior Lumbar Hernia. The floor is the aponeurosis of the Transversus Abdominis.",
-            "subject": "Anatomy"
+            "question": "What are the three signs of 'Placental Separation' during the third stage of labor?",
+            "answer": "Gush of blood, Lengthening of the umbilical cord, and Globular rise of the uterus",
+            "explanation": "Once these signs are seen, Controlled Cord Traction (CCT) is performed to deliver the placenta.",
+            "subject": "Obstetrics & Gynae"
         },
         {
-            "id": 47,
-            "image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_front.png",
+            "id": 695,
             "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_front.png",
             "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_back.png",
-            "question": "Which specific cell type in the alveoli is responsible for secreting surfactant?",
-            "answer": "Type II Pneumocytes",
-            "explanation": "Type II pneumocytes produce surfactant (dipalmitoylphosphatidylcholine), which reduces surface tension and prevents alveolar collapse. They also act as stem cells for Type I pneumocytes.",
-            "subject": "Physiology"
+            "question": "Which nerve is at risk in a 'Surgical Neck' fracture of the humerus?",
+            "answer": "Axillary Nerve",
+            "explanation": "The axillary nerve winds around the surgical neck. Injury leads to deltoid paralysis and sensation loss over the regimental badge area.",
+            "subject": "Anatomy"
         }
     ]
 }
