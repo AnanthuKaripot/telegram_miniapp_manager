@@ -1,0 +1,65 @@
+{
+    "date": "2026-01-26",
+    "cards": [
+        {
+            "subject": "Community Medicine",
+            "question": "The minimum duration of exposure required to develop coal miners' pneumoconiosis is:",
+            "options": [
+                "2-4 years",
+                "4-6 years",
+                "8-10 years",
+                "More than 10 years"
+            ],
+            "correct_index": 3,
+            "explanation": "Concept: Coal miners' pneumoconiosis, commonly known as black lung disease, is a respiratory disease caused by prolonged inhalation of coal dust. It's a type of pneumoconiosis. The development of"
+        },
+        {
+            "subject": "Obstetrics & Gynae",
+            "question": "Most sensitive screening test in diabetic mothers for congenital malformation is:",
+            "options": [
+                "MS AFP",
+                "Blood glucose",
+                "Amniotic fluid AFP",
+                "HbA1C (Glycosylated hemoglobin)"
+            ],
+            "correct_index": 3,
+            "explanation": "Concept: Diabetic mothers have a significantly increased risk of having babies with congenital malformations, particularly neural tube defects, cardiac defects, and skeletal abnormalities. The deg"
+        },
+        {
+            "subject": "Physiology",
+            "question": "Second heart sound (S\u00e2\u201a\u201a) occurs during:",
+            "options": [
+                "Protodiastole",
+                "Isovolumic relaxation",
+                "First rapid filling",
+                "Diastasis"
+            ],
+            "correct_index": 0,
+            "explanation": "Concept: The second heart sound (S2) is primarily caused by the closure of the semilunar valves \u2013 the aortic and pulmonic valves. This occurs at the beginning of diastole, when ventricular pressur"
+        },
+        {
+            "subject": "Pediatrics",
+            "question": "When does switchover from fetal to adult hemoglobin synthesis begin",
+            "options": [
+                "14 weeks gestation",
+                "30 weeks gestation",
+                "36 weeks gestation",
+                "7-10 days postnatal"
+            ],
+            "correct_index": 2,
+            "explanation": "Concept: Hemoglobin synthesis changes during development. Initially, fetal hemoglobin (HbF) is the primary oxygen-carrying protein in the fetus. As gestation progresses, the switch to adult hemogl"
+        },
+        {
+            "subject": "Community Medicine",
+            "question": "Which of the following drugs is not used in MDR-TB treatment under RNTCP?",
+            "options": [
+                "Levofloxacin",
+                "Cycloserine",
+                "PAS",
+                "Ethionamide"
+            ],
+            "correct_index": 2,
+            "explanation": "Concept: Multi-drug resistant tuberculosis (MDR-TB) is defined as resistance to at least isoniazid and rifampicin. The Revised National Tuberculosis Control Programme (RNTCP) provides standardized"
+        }
+    ]
+}
