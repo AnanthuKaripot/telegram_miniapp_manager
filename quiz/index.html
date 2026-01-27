@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>PG PathScheduler Quiz</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -157,32 +158,94 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            font-size: 1rem;
         }
 
         .explanation-text {
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             line-height: 1.6;
-            color: var(--text-dim);
+            color: #cbd5e1;
+        }
+
+        .question-text p,
+        .option p,
+        .explanation-text p {
+            margin: 0 0 12px 0;
+        }
+
+        .question-text p:last-child,
+        .option p:last-child,
+        .explanation-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .explanation-text ul,
+        .explanation-text ol,
+        .question-text ul,
+        .question-text ol {
+            padding-left: 20px;
+            margin: 12px 0;
+        }
+
+        .explanation-text li,
+        .question-text li {
+            margin-bottom: 6px;
+        }
+
+        .explanation-text strong,
+        .question-text strong,
+        .option strong {
+            color: var(--text);
+            font-weight: 700;
         }
 
         /* Navigation */
         .nav-footer {
             margin-top: auto;
-            padding: 20px 0;
+            padding: 24px 0;
             display: flex;
-            justify-content: flex-end;
+            gap: 12px;
+            align-items: center;
         }
 
-        .btn {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 12px 24px;
+        .nav-btn {
+            padding: 12px 16px;
             border-radius: 12px;
             font-weight: 700;
             cursor: pointer;
+            border: none;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-prev {
+            background: #334155;
+            color: white;
+        }
+
+        .btn-next {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .btn-end {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-finish {
+            background: var(--green);
+            color: white;
+            width: 100%;
             display: none;
-            animation: fadeIn 0.3s ease;
         }
 
         /* Result Screen */
@@ -193,25 +256,42 @@
         }
 
         .score-circle {
-            width: 150px;
-            height: 150px;
-            border: 8px solid var(--accent);
+            width: 160px;
+            height: 160px;
+            border: 10px solid var(--accent);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             margin: 0 auto 30px;
+            background: rgba(34, 211, 238, 0.05);
+            /* Subtle glow */
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.2);
+            position: relative;
         }
 
         .score-num {
-            font-size: 3rem;
-            font-weight: 800;
+            font-size: 3.5rem;
+            font-weight: 850;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
         }
 
         .score-label {
             font-size: 0.9rem;
-            opacity: 0.7;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .result-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px 20px;
+            margin-bottom: 30px;
         }
 
         /* Animations */
@@ -317,6 +397,82 @@
                 opacity: 1;
             }
         }
+
+        /* Leaderboard Styles */
+        .leaderboard-container {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .leaderboard-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-table th {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #334155;
+            opacity: 0.6;
+            font-weight: 600;
+        }
+
+        .leaderboard-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .leaderboard-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rank-badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .rank-1 {
+            background: #ffd700;
+            color: #000;
+        }
+
+        .rank-2 {
+            background: #c0c0c0;
+            color: #000;
+        }
+
+        .rank-3 {
+            background: #cd7f32;
+            color: #000;
+        }
+
+        .user-highlight {
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--accent);
+            font-weight: 700;
+        }
     </style>
 </head>
 
@@ -354,45 +510,127 @@
         </div>
 
         <div class="nav-footer">
-            <button id="next-btn" class="btn">Next Question →</button>
-            <button id="finish-btn" class="btn" style="background:var(--green)">View Results</button>
+            <button id="prev-btn" class="nav-btn btn-prev" style="display:none">← Previous</button>
+            <button id="exit-review-btn" class="nav-btn btn-end" style="display:none">End Review</button>
+            <button id="next-btn" class="nav-btn btn-next" style="display:none">Next →</button>
+            <button id="finish-btn" class="nav-btn btn-finish" style="display:none">Finish Quiz</button>
         </div>
     </div>
 
     <div id="result-screen" class="container">
-        <h1 style="color: var(--accent)">Quiz Complete!</h1>
-        <div class="score-circle">
-            <div id="final-score" class="score-num">0</div>
-            <div class="score-label">out of 10</div>
+        <div class="result-card">
+            <h1 style="color: var(--accent); margin-bottom: 24px;">Quiz Complete!</h1>
+            <div class="score-circle">
+                <div id="final-score" class="score-num">0</div>
+                <div class="score-label">out of 10</div>
+            </div>
+            <p id="result-message"
+                style="margin-bottom: 15px; color: var(--text); font-weight: 600; font-size: 1.1rem;">Great progress,
+                Doctor!</p>
         </div>
-        <p id="result-message" style="margin-bottom: 30px">Great progress, Doctor!</p>
-        <button onclick="window.location.reload()" class="option"
-            style="justify-content: center; background: var(--accent); color: #000; border:none; width: 100%">Retake
-            Quiz</button>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+            <button onclick="startReview()" class="nav-btn"
+                style="flex: 1; justify-content: center; background: rgba(255,255,255,0.05); color: white; border:1px solid rgba(255,255,255,0.1)">📖
+                Review</button>
+            <button onclick="toggleLeaderboard()" class="nav-btn"
+                style="flex: 1; justify-content: center; background: rgba(34, 211, 238, 0.1); color: var(--accent); border: 1px solid var(--accent);">🏆
+                Rankings</button>
+        </div>
+
+        <div id="leaderboard-view" class="leaderboard-container" style="display: none;">
+            <div class="leaderboard-title">🏆 Leaderboard</div>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Doctor</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <tr>
+                        <td colspan="3" style="text-align:center; padding: 20px; opacity: 0.5;">Loading rankings...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
         <button onclick="Telegram.WebApp.close()" class="option"
-            style="justify-content: center; margin-top: 12px; background: #334155; border:none; width: 100%">Back to
-            Bot</button>
+            style="justify-content: center; margin-top: 20px; background: #334155; border:none; width: 100%; color: white;">Back
+            to Bot</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // Robust Markdown Parser
+        const parseMD = (text) => {
+            if (!text) return '';
+            let html = text;
+            try {
+                if (typeof marked !== 'undefined' && (marked.parse || typeof marked === 'function')) {
+                    html = (marked.parse ? marked.parse(text) : marked(text));
+                } else {
+                    // Robust Fallback for basic Markdown
+                    html = text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/__(.*?)__/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/_(.*?)_/g, '<em>$1</em>')
+                        .replace(/\n/g, '<br>');
+                }
+            } catch (e) {
+                console.error("Markdown parse error", e);
+                html = text.replace(/\n/g, '<br>');
+            }
+            return html;
+        };
+
+        // ⚠️ REPLACE THIS with your actual Worker URL after deployment
+        const API_BASE_URL = 'https://pathscheduler-telegram-bot.pathexor.workers.dev';
+
+        const user = tg.initDataUnsafe?.user || { id: 123, first_name: 'Guest' };
+
+        let quizId = '';
         let quizData = [];
+        let userAnswers = [];
         let currentIndex = 0;
         let score = 0;
         let answered = false;
+        let isReviewMode = false;
+        let hasAlreadyPlayed = false;
 
         async function initQuiz() {
             try {
-                // Fetch the generated quiz data
-                // In production, this would be quiz_data.json relative to the app
+                // 1. Fetch the quiz data first to get the quizId
+                document.getElementById('loadingText').textContent = "Loading Questions...";
                 const response = await fetch('quiz_data.json');
                 const data = await response.json();
 
+                quizId = data.quiz_id || 'legacy_quiz';
                 quizData = data.questions;
+                userAnswers = new Array(quizData.length).fill(null);
                 document.getElementById('subject-tag').innerText = data.subject.toUpperCase();
 
+                // 2. Check user status for THIS quiz
+                document.getElementById('loadingText').textContent = "Checking Status...";
+                try {
+                    const statusRes = await fetch(`${API_BASE_URL}/user-status?userId=${user.id}&quizId=${quizId}`);
+                    if (statusRes.ok) {
+                        const statusData = await statusRes.json();
+                        if (statusData.score !== undefined) {
+                            hasAlreadyPlayed = true;
+                            showResult(statusData.score);
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Leaderboard API offline or status check failed");
+                }
+
+                // 3. Start the quiz
                 document.getElementById('loadingText').textContent = "Starting Quiz...";
 
                 setTimeout(() => {
@@ -416,33 +654,56 @@
         }
 
         function showQuestion() {
-            answered = false;
+            answered = isReviewMode;
             const q = quizData[currentIndex];
 
             document.getElementById('q-number').innerText = `Question ${currentIndex + 1}/${quizData.length}`;
-            document.getElementById('progress').style.width = `${(currentIndex / quizData.length) * 100}%`;
-            document.getElementById('question').innerText = q.question;
+            document.getElementById('progress').style.width = `${((currentIndex + 1) / quizData.length) * 100}%`;
+            document.getElementById('question').innerHTML = parseMD(q.question);
 
             const optionsHtml = [
                 { text: q.opa, index: 1 },
                 { text: q.opb, index: 2 },
                 { text: q.opc, index: 3 },
                 { text: q.opd, index: 4 }
-            ].map(opt => `
-                <div class="option" onclick="checkAnswer(${opt.index}, this)">
-                    <div class="option-label">${String.fromCharCode(64 + opt.index)}</div>
-                    <div>${opt.text}</div>
-                </div>
-            `).join('');
+            ].map(opt => {
+                let statusClass = '';
+                if (isReviewMode) {
+                    const userPick = userAnswers[currentIndex];
+                    const correctIdx = parseInt(q.cop);
+                    if (opt.index === correctIdx) statusClass = 'correct';
+                    else if (opt.index === userPick) statusClass = 'wrong';
+                }
+                return `
+                    <div class="option ${statusClass}" onclick="checkAnswer(${opt.index}, this)">
+                        <div class="option-label">${String.fromCharCode(64 + opt.index)}</div>
+                        <div style="flex:1">${parseMD(opt.text)}</div>
+                    </div>
+                `;
+            }).join('');
 
             document.getElementById('options-container').innerHTML = optionsHtml;
-            document.getElementById('explanation-box').style.display = 'none';
-            document.getElementById('next-btn').style.display = 'none';
+
+            if (isReviewMode) {
+                document.getElementById('explanation-text').innerHTML = parseMD(q.explanation);
+                document.getElementById('explanation-box').style.display = 'block';
+                document.getElementById('next-btn').style.display = currentIndex < quizData.length - 1 ? 'flex' : 'none';
+                document.getElementById('prev-btn').style.display = currentIndex > 0 ? 'flex' : 'none';
+                document.getElementById('finish-btn').style.display = 'none';
+                document.getElementById('exit-review-btn').style.display = 'flex';
+            } else {
+                document.getElementById('explanation-box').style.display = 'none';
+                document.getElementById('next-btn').style.display = 'none';
+                document.getElementById('prev-btn').style.display = 'none';
+                document.getElementById('finish-btn').style.display = answered ? 'flex' : 'none';
+                document.getElementById('exit-review-btn').style.display = 'none';
+            }
         }
 
         function checkAnswer(selectedIndex, element) {
             if (answered) return;
             answered = true;
+            userAnswers[currentIndex] = selectedIndex;
 
             const q = quizData[currentIndex];
             const correctIndex = parseInt(q.cop);
@@ -460,14 +721,14 @@
             }
 
             // Show explanation
-            document.getElementById('explanation-text').innerText = q.explanation;
+            document.getElementById('explanation-text').innerHTML = parseMD(q.explanation);
             document.getElementById('explanation-box').style.display = 'block';
 
             // Show next/finish button
             if (currentIndex < quizData.length - 1) {
-                document.getElementById('next-btn').style.display = 'block';
+                document.getElementById('next-btn').style.display = 'flex';
             } else {
-                document.getElementById('finish-btn').style.display = 'block';
+                document.getElementById('finish-btn').style.display = 'flex';
             }
         }
 
@@ -476,17 +737,101 @@
             showQuestion();
         };
 
-        document.getElementById('finish-btn').onclick = () => {
+        document.getElementById('prev-btn').onclick = () => {
+            currentIndex--;
+            showQuestion();
+        };
+
+        document.getElementById('exit-review-btn').onclick = () => {
+            isReviewMode = false;
             document.getElementById('quiz-container').style.display = 'none';
             document.getElementById('result-screen').style.display = 'block';
-            document.getElementById('final-score').innerText = score;
-
-            let msg = "Keep practicing, Doctor!";
-            if (score >= 8) msg = "Excellent performance! You're on the right track.";
-            else if (score >= 5) msg = "Good job! A bit more focus and you'll master this subject.";
-
-            document.getElementById('result-message').innerText = msg;
         };
+
+        document.getElementById('finish-btn').onclick = async () => {
+            await submitScore();
+            showResult(score);
+        };
+
+        function showResult(finalScore) {
+            document.getElementById('quiz-container').style.display = 'none';
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            document.getElementById('final-score').innerText = finalScore;
+
+            if (hasAlreadyPlayed) {
+                document.getElementById('result-message').innerText = "You have already completed this weekly quiz!";
+                document.getElementById('retry-block').style.display = 'none';
+            } else {
+                let msg = "Keep practicing, Doctor!";
+                if (finalScore >= 8) msg = "Excellent performance! You're on the right track.";
+                else if (finalScore >= 5) msg = "Good job! A bit more focus and you'll master this subject.";
+                document.getElementById('result-message').innerText = msg;
+            }
+
+            // Auto-load leaderboard data in background
+            fetchLeaderboard();
+        }
+
+        function startReview() {
+            isReviewMode = true;
+            currentIndex = 0;
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'flex';
+            showQuestion();
+        }
+
+        function toggleLeaderboard() {
+            const lv = document.getElementById('leaderboard-view');
+            lv.style.display = lv.style.display === 'none' ? 'block' : 'none';
+            if (lv.style.display === 'block') {
+                lv.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        async function submitScore() {
+            try {
+                await fetch(`${API_BASE_URL}/submit-score`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        quizId: quizId,
+                        userId: user.id,
+                        firstName: user.first_name,
+                        score: score,
+                        total: quizData.length
+                    })
+                });
+            } catch (e) { console.error("Score submission failed", e); }
+        }
+
+        async function fetchLeaderboard() {
+            try {
+                console.log("Fetching leaderboard for quizId:", quizId);
+                const res = await fetch(`${API_BASE_URL}/leaderboard?quizId=${quizId}`);
+                const data = await res.json();
+
+                const body = document.getElementById('leaderboard-body');
+                if (!Array.isArray(data)) {
+                    throw new Error("Invalid data format");
+                }
+
+                body.innerHTML = data.map((entry, idx) => `
+                    <tr class="${String(entry.userId) === String(user.id) ? 'user-highlight' : ''}">
+                        <td><span class="rank-badge rank-${idx + 1}">${idx + 1}</span></td>
+                        <td>Dr. ${entry.firstName}</td>
+                        <td>${entry.score}/${entry.total}</td>
+                    </tr>
+                `).join('');
+
+                if (data.length === 0) {
+                    body.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px; opacity: 0.5;">No scores yet. Be the first!</td></tr>';
+                }
+            } catch (e) {
+                document.getElementById('leaderboard-body').innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px; color: var(--red);">Failed to load leaderboard</td></tr>';
+            }
+        }
 
         initQuiz();
     </script>
