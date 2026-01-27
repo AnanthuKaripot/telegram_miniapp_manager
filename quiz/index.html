@@ -608,11 +608,33 @@
         let isReviewMode = false;
         let hasAlreadyPlayed = false;
 
+        function showScreen(screenId) {
+            const screens = ['loadingOverlay', 'quiz-container', 'result-screen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (id === 'loadingOverlay') {
+                        // Special handling for the overlay transition
+                        if (screenId === id) {
+                            el.style.display = 'flex';
+                            el.style.opacity = '1';
+                        } else {
+                            el.style.opacity = '0';
+                            setTimeout(() => el.style.display = 'none', 500);
+                        }
+                    } else {
+                        el.style.display = (id === screenId) ? 'flex' : 'none';
+                    }
+                }
+            });
+        }
+
         async function initQuiz() {
             try {
+                showScreen('loadingOverlay');
                 // 1. Fetch the quiz data first to get the quizId
                 document.getElementById('loadingText').textContent = "Loading Questions...";
-                const response = await fetch('quiz_data.json');
+                const response = await fetch(`quiz_data.json?v=${Date.now()}`);
                 const data = await response.json();
 
                 quizId = data.quiz_id || 'legacy_quiz';
@@ -640,15 +662,9 @@
                 document.getElementById('loadingText').textContent = "Starting Quiz...";
 
                 setTimeout(() => {
-                    const overlay = document.getElementById('loadingOverlay');
-                    if (overlay) {
-                        overlay.style.opacity = '0';
-                        setTimeout(() => overlay.remove(), 500);
-                    }
-                    document.getElementById('quiz-container').style.display = 'flex';
+                    showScreen('quiz-container');
+                    showQuestion();
                 }, 800);
-
-                showQuestion();
             } catch (error) {
                 console.error('Error loading quiz:', error);
                 const loadingText = document.getElementById('loadingText');
@@ -760,8 +776,7 @@
 
         document.getElementById('exit-review-btn').onclick = () => {
             isReviewMode = false;
-            document.getElementById('quiz-container').style.display = 'none';
-            document.getElementById('result-screen').style.display = 'block';
+            showScreen('result-screen');
         };
 
         document.getElementById('finish-btn').onclick = async () => {
@@ -770,13 +785,7 @@
         };
 
         function showResult(finalScore) {
-            // Hide everything else
-            document.getElementById('quiz-container').style.display = 'none';
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) overlay.style.display = 'none';
-
-            // Show result screen
-            document.getElementById('result-screen').style.display = 'flex';
+            showScreen('result-screen');
             document.getElementById('final-score').innerText = finalScore;
 
             if (hasAlreadyPlayed) {
@@ -796,8 +805,7 @@
         function startReview() {
             isReviewMode = true;
             currentIndex = 0;
-            document.getElementById('result-screen').style.display = 'none';
-            document.getElementById('quiz-container').style.display = 'flex';
+            showScreen('quiz-container');
             showQuestion();
         }
 
