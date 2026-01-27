@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>PG PathScheduler Quiz</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #22d3ee;
+            --green: #10b981;
+            --red: #ef4444;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Stats */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .subject-tag {
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .timer {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Question Card */
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #334155;
+            border: 2px solid transparent;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .option:active {
+            transform: scale(0.98);
+        }
+
+        .option.correct {
+            border-color: var(--green);
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .option.wrong {
+            border-color: var(--red);
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .option-label {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* Explanation Box */
+        .explanation {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+        }
+
+        .explanation-title {
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .explanation-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        /* Navigation */
+        .nav-footer {
+            margin-top: auto;
+            padding: 20px 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Result Screen */
+        #result-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border: 8px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+        }
+
+        .score-num {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Loading */
+        .loading-screen {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #334155;
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="loading" class="loading-screen">
+        <div class="spinner"></div>
+        <div>Loading Weekly Quiz...</div>
+    </div>
+
+    <div class="container" id="quiz-container" style="display:none">
+        <div class="progress-container">
+            <div id="progress" class="progress-bar"></div>
+        </div>
+
+        <div class="header">
+            <span id="subject-tag" class="subject-tag">SUBJECT</span>
+            <span id="q-number" style="opacity:0.7">Question 1/10</span>
+        </div>
+
+        <div class="card">
+            <div id="question" class="question-text">Loading question...</div>
+            <div class="options" id="options-container">
+                <!-- Options will be injected here -->
+            </div>
+
+            <div id="explanation-box" class="explanation">
+                <div class="explanation-title">💡 Explanation</div>
+                <div id="explanation-text" class="explanation-text"></div>
+            </div>
+        </div>
+
+        <div class="nav-footer">
+            <button id="next-btn" class="btn">Next Question →</button>
+            <button id="finish-btn" class="btn" style="background:var(--green)">View Results</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="container">
+        <h1 style="color: var(--accent)">Quiz Complete!</h1>
+        <div class="score-circle">
+            <div id="final-score" class="score-num">0</div>
+            <div class="score-label">out of 10</div>
+        </div>
+        <p id="result-message" style="margin-bottom: 30px">Great progress, Doctor!</p>
+        <button onclick="window.location.reload()" class="option" style="justify-content: center; background: var(--accent); color: #000; border:none; width: 100%">Retake Quiz</button>
+        <button onclick="Telegram.WebApp.close()" class="option" style="justify-content: center; margin-top: 12px; background: #334155; border:none; width: 100%">Back to Bot</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let quizData = [];
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        async function initQuiz() {
+            try {
+                // Fetch the generated quiz data
+                // In production, this would be quiz_data.json relative to the app
+                const response = await fetch('../quiz_data.json');
+                const data = await response.json();
+                
+                quizData = data.questions;
+                document.getElementById('subject-tag').innerText = data.subject.toUpperCase();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('quiz-container').style.display = 'flex';
+                
+                showQuestion();
+            } catch (error) {
+                console.error('Error loading quiz:', error);
+                document.getElementById('loading').innerText = "Failed to load quiz. Please try again later.";
+            }
+        }
+
+        function showQuestion() {
+            answered = false;
+            const q = quizData[currentIndex];
+            
+            document.getElementById('q-number').innerText = `Question ${currentIndex + 1}/${quizData.length}`;
+            document.getElementById('progress').style.width = `${(currentIndex / quizData.length) * 100}%`;
+            document.getElementById('question').innerText = q.question;
+            
+            const optionsHtml = [
+                { text: q.opa, index: 1 },
+                { text: q.opb, index: 2 },
+                { text: q.opc, index: 3 },
+                { text: q.opd, index: 4 }
+            ].map(opt => `
+                <div class="option" onclick="checkAnswer(${opt.index}, this)">
+                    <div class="option-label">${String.fromCharCode(64 + opt.index)}</div>
+                    <div>${opt.text}</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('options-container').innerHTML = optionsHtml;
+            document.getElementById('explanation-box').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(selectedIndex, element) {
+            if (answered) return;
+            answered = true;
+            
+            const q = quizData[currentIndex];
+            const correctIndex = parseInt(q.cop);
+            
+            const options = document.querySelectorAll('.option');
+            
+            if (selectedIndex === correctIndex) {
+                element.classList.add('correct');
+                score++;
+                tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                element.classList.add('wrong');
+                options[correctIndex - 1].classList.add('correct');
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+
+            // Show explanation
+            document.getElementById('explanation-text').innerText = q.explanation;
+            document.getElementById('explanation-box').style.display = 'block';
+
+            // Show next/finish button
+            if (currentIndex < quizData.length - 1) {
+                document.getElementById('next-btn').style.display = 'block';
+            } else {
+                document.getElementById('finish-btn').style.display = 'block';
+            }
+        }
+
+        document.getElementById('next-btn').onclick = () => {
+            currentIndex++;
+            showQuestion();
+        };
+
+        document.getElementById('finish-btn').onclick = () => {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            document.getElementById('final-score').innerText = score;
+            
+            let msg = "Keep practicing, Doctor!";
+            if (score >= 8) msg = "Excellent performance! You're on the right track.";
+            else if (score >= 5) msg = "Good job! A bit more focus and you'll master this subject.";
+            
+            document.getElementById('result-message').innerText = msg;
+        };
+
+        initQuiz();
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+name = "pathscheduler-telegram-bot"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# The BOT_TOKEN will be added as a secret via:
+# npx wrangler secret put BOT_TOKEN

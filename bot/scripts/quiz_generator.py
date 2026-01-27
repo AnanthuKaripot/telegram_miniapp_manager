@@ -1,0 +1,58 @@
+import os
+import json
+import random
+
+def generate_quiz(qbank_path, output_path, num_questions=10):
+    try:
+        # Get all subject files
+        subject_files = [f for f in os.listdir(qbank_path) if f.endswith('.json')]
+        if not subject_files:
+            print("No subject files found.")
+            return
+
+        # Pick a random subject
+        subject_file = random.choice(subject_files)
+        subject_name = subject_file.replace('.json', '')
+        print(f"Selecting questions from: {subject_name}")
+
+        file_path = os.path.join(qbank_path, subject_file)
+        
+        # Read questions (JSON Lines format)
+        questions = []
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.strip():
+                    questions.append(json.loads(line))
+
+        if len(questions) < num_questions:
+            selected = questions
+        else:
+            selected = random.sample(questions, num_questions)
+
+        # Output structure
+        quiz_data = {
+            "subject": subject_name,
+            "questions": selected
+        }
+
+        # Write to output
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(quiz_data, f, indent=2)
+        
+        print(f"Successfully generated quiz with {len(selected)} questions to {output_path}")
+
+    except Exception as e:
+        print(f"Error generating quiz: {e}")
+
+if __name__ == "__main__":
+    # Update paths as needed for your environment
+    QBANK_DIR = r"c:\flutter_project\neet_pg_tools_flutter\neetpg_app\assets\qbank"
+    
+    # n8n local files directory
+    OUTPUT_DIR = r"C:\Users\anant\.n8n-files\quiz"
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+        
+    OUTPUT_FILE = os.path.join(OUTPUT_DIR, "quiz_data.json")
+    
+    generate_quiz(QBANK_DIR, OUTPUT_FILE)
