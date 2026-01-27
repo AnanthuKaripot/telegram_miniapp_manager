@@ -114,6 +114,7 @@
             display: flex;
             align-items: center;
             font-weight: 500;
+            color: var(--text);
         }
 
         .option:active {
@@ -220,6 +221,8 @@
             justify-content: center;
             font-size: 0.9rem;
             transition: all 0.2s;
+            visibility: visible;
+            /* Using visibility for layout stability */
         }
 
         .nav-btn:active {
@@ -422,7 +425,9 @@
         .leaderboard-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            color: var(--text);
+            /* Ensure readability */
         }
 
         .leaderboard-table th {
@@ -517,7 +522,7 @@
         </div>
     </div>
 
-    <div id="result-screen" class="container">
+    <div id="result-screen" class="container" style="display:none">
         <div class="result-card">
             <h1 style="color: var(--accent); margin-bottom: 24px;">Quiz Complete!</h1>
             <div class="score-circle">
@@ -525,7 +530,8 @@
                 <div class="score-label">out of 10</div>
             </div>
             <p id="result-message"
-                style="margin-bottom: 15px; color: var(--text); font-weight: 600; font-size: 1.1rem;">Great progress,
+                style="margin-bottom: 25px; color: var(--text); font-weight: 600; font-size: 1.1rem; line-height:1.4;">
+                Great progress,
                 Doctor!</p>
         </div>
 
@@ -687,16 +693,26 @@
             if (isReviewMode) {
                 document.getElementById('explanation-text').innerHTML = parseMD(q.explanation);
                 document.getElementById('explanation-box').style.display = 'block';
-                document.getElementById('next-btn').style.display = currentIndex < quizData.length - 1 ? 'flex' : 'none';
-                document.getElementById('prev-btn').style.display = currentIndex > 0 ? 'flex' : 'none';
+
+                // Navigation visibility for centered layout
+                document.getElementById('next-btn').style.visibility = currentIndex < quizData.length - 1 ? 'visible' : 'hidden';
+                document.getElementById('prev-btn').style.visibility = currentIndex > 0 ? 'visible' : 'hidden';
+                document.getElementById('next-btn').style.display = 'flex';
+                document.getElementById('prev-btn').style.display = 'flex';
+
                 document.getElementById('finish-btn').style.display = 'none';
                 document.getElementById('exit-review-btn').style.display = 'flex';
+                document.getElementById('exit-review-btn').style.visibility = 'visible';
             } else {
                 document.getElementById('explanation-box').style.display = 'none';
                 document.getElementById('next-btn').style.display = 'none';
                 document.getElementById('prev-btn').style.display = 'none';
                 document.getElementById('finish-btn').style.display = answered ? 'flex' : 'none';
                 document.getElementById('exit-review-btn').style.display = 'none';
+
+                // Reset visibility for other buttons when not in review
+                document.getElementById('next-btn').style.visibility = 'visible';
+                document.getElementById('prev-btn').style.visibility = 'visible';
             }
         }
 
@@ -754,10 +770,13 @@
         };
 
         function showResult(finalScore) {
+            // Hide everything else
             document.getElementById('quiz-container').style.display = 'none';
             const overlay = document.getElementById('loadingOverlay');
             if (overlay) overlay.style.display = 'none';
-            document.getElementById('result-screen').style.display = 'block';
+
+            // Show result screen
+            document.getElementById('result-screen').style.display = 'flex';
             document.getElementById('final-score').innerText = finalScore;
 
             if (hasAlreadyPlayed) {

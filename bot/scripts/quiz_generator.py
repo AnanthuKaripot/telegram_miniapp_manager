@@ -30,8 +30,9 @@ def generate_quiz(qbank_path, output_path, num_questions=10):
         else:
             selected = random.sample(questions, num_questions)
 
-        # Generate unique quiz ID
-        quiz_id = f"quiz_{datetime.now().strftime('%Y_%m_%d')}_{subject_name.lower().replace(' ', '_')}"
+        # Generate unique quiz ID with random suffix to prevent "stuck" states during same-day testing
+        random_suffix = '%04x' % random.randrange(16**4)
+        quiz_id = f"quiz_{datetime.now().strftime('%Y_%m_%d')}_{subject_name.lower().replace(' ', '_')}_{random_suffix}"
 
         # Output structure
         quiz_data = {
