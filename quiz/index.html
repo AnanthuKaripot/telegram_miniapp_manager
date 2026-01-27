@@ -492,6 +492,26 @@
         <div class="loading-text" id="loadingText">Preparing Session...</div>
     </div>
 
+    <div class="container" id="welcome-gate" style="display:none">
+        <div class="result-card" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">🩺</div>
+            <h1 id="welcome-title" style="color: var(--accent); margin-bottom: 10px;">Welcome, Doctor</h1>
+            <p id="gate-subject" style="opacity: 0.8; margin-bottom: 30px; font-weight: 600; font-size: 1.2rem;">SUBJECT
+            </p>
+
+            <div id="status-check-box" style="margin-bottom: 30px;">
+                <p id="status-text" style="font-size: 0.9rem; opacity: 0.7;">Verifying your credentials...</p>
+            </div>
+
+            <button id="start-quiz-btn" class="nav-btn btn-next" style="display:none; width: 100%;"
+                onclick="startQuiz()">Start Quiz →</button>
+            <button id="view-results-btn" class="nav-btn btn-finish" style="display:none; width: 100%;"
+                onclick="showScreen('result-screen')">View My Results →</button>
+        </div>
+        <p style="text-align: center; font-size: 0.8rem; opacity: 0.5; margin-top: 20px;">Strict Policy: 1 Attempt Per
+            Weekly Quiz</p>
+    </div>
+
     <div class="container" id="quiz-container" style="display:none">
         <div class="progress-container">
             <div id="progress" class="progress-bar"></div>
@@ -609,7 +629,7 @@
         let hasAlreadyPlayed = false;
 
         function showScreen(screenId) {
-            const screens = ['loadingOverlay', 'quiz-container', 'result-screen'];
+            const screens = ['loadingOverlay', 'welcome-gate', 'quiz-container', 'result-screen'];
             screens.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -632,47 +652,63 @@
         async function initQuiz() {
             try {
                 showScreen('loadingOverlay');
-                // 1. Fetch the quiz data first to get the quizId
-                document.getElementById('loadingText').textContent = "Loading Questions...";
+
+                // 1. Fetch User
+                if (user.first_name) {
+                    document.getElementById('welcome-title').innerText = `Welcome, Dr. ${user.first_name}`;
+                }
+
+                // 2. Fetch Quiz Data
+                document.getElementById('loadingText').textContent = "Syncing Questions...";
                 const response = await fetch(`quiz_data.json?v=${Date.now()}`);
                 const data = await response.json();
 
                 quizId = data.quiz_id || 'legacy_quiz';
                 quizData = data.questions;
                 userAnswers = new Array(quizData.length).fill(null);
+
+                document.getElementById('gate-subject').innerText = data.subject.toUpperCase();
                 document.getElementById('subject-tag').innerText = data.subject.toUpperCase();
 
-                // 2. Check user status for THIS quiz
-                document.getElementById('loadingText').textContent = "Checking Status...";
+                // 3. Check Persistence
+                document.getElementById('loadingText').textContent = "Safety Check...";
                 try {
                     const statusRes = await fetch(`${API_BASE_URL}/user-status?userId=${user.id}&quizId=${quizId}`);
                     if (statusRes.ok) {
                         const statusData = await statusRes.json();
                         if (statusData.score !== undefined) {
                             hasAlreadyPlayed = true;
-                            showResult(statusData.score);
+                            score = statusData.score;
+                            document.getElementById('status-text').innerText = "Already Completed!";
+                            document.getElementById('status-text').style.color = "var(--green)";
+                            document.getElementById('view-results-btn').style.display = "flex";
+                            document.getElementById('start-quiz-btn').style.display = "none";
+                            showResult(score);
                             return;
                         }
                     }
+                    document.getElementById('status-text').innerText = "Voter ID Verified ✅ Ready to Start.";
+                    document.getElementById('status-text').style.color = "var(--accent)";
+                    document.getElementById('start-quiz-btn').style.display = "flex";
                 } catch (e) {
-                    console.warn("Leaderboard API offline or status check failed");
+                    console.warn("Status check skipped (offline mode)");
+                    document.getElementById('status-text').innerText = "Offline Mode Active.";
+                    document.getElementById('start-quiz-btn').style.display = "flex";
                 }
 
-                // 3. Start the quiz
-                document.getElementById('loadingText').textContent = "Starting Quiz...";
+                // Show Welcome Gate
+                setTimeout(() => showScreen('welcome-gate'), 800);
 
-                setTimeout(() => {
-                    showScreen('quiz-container');
-                    showQuestion();
-                }, 800);
             } catch (error) {
-                console.error('Error loading quiz:', error);
-                const loadingText = document.getElementById('loadingText');
-                if (loadingText) {
-                    loadingText.textContent = "Failed to load quiz.";
-                    loadingText.style.color = "var(--red)";
-                }
+                console.error('Initialization error:', error);
+                document.getElementById('loadingText').textContent = "Connection Failure.";
+                document.getElementById('loadingText').style.color = "var(--red)";
             }
+        }
+
+        function startQuiz() {
+            showScreen('quiz-container');
+            showQuestion();
         }
 
         function showQuestion() {
