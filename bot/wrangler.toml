@@ -4,3 +4,7 @@ compatibility_date = "2024-01-01"
 
 # The BOT_TOKEN will be added as a secret via:
 # npx wrangler secret put BOT_TOKEN
+
+[[kv_namespaces]]
+binding = "QUIZ_DATA"
+id = "19a92d007a56421c9f03811fecd1736b"

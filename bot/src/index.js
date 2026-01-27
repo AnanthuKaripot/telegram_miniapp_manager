@@ -1,5 +1,96 @@
 export default {
   async fetch(request, env) {
+    const url = new URL(request.url);
+
+    // Handle CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        }
+      });
+    }
+
+    // Leaderboard Route
+    if (url.pathname === '/leaderboard') {
+      try {
+        const quizId = url.searchParams.get('quizId');
+        if (!quizId) return new Response('Missing Quiz ID', { status: 400 });
+
+        const list = await env.QUIZ_DATA.list({ prefix: `quiz:${quizId}:user:` });
+        const scores = [];
+        for (const key of list.keys) {
+          const val = await env.QUIZ_DATA.get(key.name);
+          if (val) scores.push(JSON.parse(val));
+        }
+        // Sort by score (high to low) and take top 10
+        scores.sort((a, b) => b.score - a.score);
+        const top10 = scores.slice(0, 10);
+
+        return new Response(JSON.stringify(top10), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } catch (e) {
+        return new Response('Error', { status: 500 });
+      }
+    }
+
+    // Submit Score Route
+    if (url.pathname === '/submit-score' && request.method === 'POST') {
+      try {
+        const data = await request.json();
+        const { quizId, userId, firstName, score, total } = data;
+
+        if (!quizId || !userId) return new Response('Missing parameters', { status: 400 });
+
+        const kvKey = `quiz:${quizId}:user:${userId}`;
+
+        // Check if user already submitted for THIS quiz
+        const existing = await env.QUIZ_DATA.get(kvKey);
+        if (existing) {
+          return new Response(JSON.stringify({ error: 'Already submitted' }), {
+            status: 403,
+            headers: { 'Access-Control-Allow-Origin': '*' }
+          });
+        }
+
+        // Save score
+        const entry = { quizId, userId, firstName, score, total, date: new Date().toISOString() };
+        await env.QUIZ_DATA.put(kvKey, JSON.stringify(entry));
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } catch (e) {
+        return new Response('Error', { status: 500 });
+      }
+    }
+
+    // User Status Route
+    if (url.pathname === '/user-status') {
+      const userId = url.searchParams.get('userId');
+      const quizId = url.searchParams.get('quizId');
+
+      if (!userId || !quizId) return new Response('Missing parameters', { status: 400 });
+
+      const entry = await env.QUIZ_DATA.get(`quiz:${quizId}:user:${userId}`);
+      return new Response(entry || JSON.stringify({ status: 'not_played' }), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    // Telegram Webhook Handler (Original Logic)
     if (request.method !== 'POST') {
       return new Response('OK', { status: 200 });
     }
@@ -90,7 +181,6 @@ Welcome to *PG PathScheduler*
 
 _The ultimate companion for medical professionals._
 High-yield QBank • AI explanations • Smart flashcards
-— all in one powerful app.
 
 ⬇️ *Get Started*
 `.trim();
@@ -102,7 +192,7 @@ High-yield QBank • AI explanations • Smart flashcards
         { text: '🌐 Community', url: 'https://www.pathexor.in/pathscheduler/links/' }
       ],
       [
-        { text: '🚀 Our Apps', callback_data: 'apps' },
+        { text: '🚀 Mini Apps', callback_data: 'apps' },
         { text: '💡 Help', callback_data: 'help' }
       ]
     ]
@@ -138,7 +228,7 @@ Need assistance? Contact us via our official channel.
 
 async function sendAppsMessage(botToken, chatId) {
   const appsText = `
-🚀 *PG PathScheduler Apps*
+🚀 *PG PathScheduler Mini Apps*
 
 Enhance your preparation with our tools:
 `.trim();

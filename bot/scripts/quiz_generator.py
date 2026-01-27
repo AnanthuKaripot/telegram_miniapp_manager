@@ -1,6 +1,7 @@
 import os
 import json
 import random
+from datetime import datetime
 
 def generate_quiz(qbank_path, output_path, num_questions=10):
     try:
@@ -29,8 +30,12 @@ def generate_quiz(qbank_path, output_path, num_questions=10):
         else:
             selected = random.sample(questions, num_questions)
 
+        # Generate unique quiz ID
+        quiz_id = f"quiz_{datetime.now().strftime('%Y_%m_%d')}_{subject_name.lower().replace(' ', '_')}"
+
         # Output structure
         quiz_data = {
+            "quiz_id": quiz_id,
             "subject": subject_name,
             "questions": selected
         }
