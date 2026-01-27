@@ -1,0 +1,103 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "days"
+                        }
+                    ]
+                }
+            },
+            "id": "2bb864c7-8c4d-4c3e-908d-8a4365780a4a",
+            "name": "Schedule Trigger",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.1,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "command": "python c:\\flutter_project\\neet_pg_tools_flutter\\telegram_miniapp_manager\\bot\\scripts\\quiz_generator.py"
+            },
+            "id": "e30e1c1b-b7e1-4c12-9c3a-d66760634963",
+            "name": "Execute Command",
+            "type": "n8n-nodes-base.executeCommand",
+            "typeVersion": 1,
+            "position": [
+                600,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "filePath": "C:\\Users\\anant\\.n8n-files\\quiz\\quiz_data.json"
+            },
+            "id": "f5f1c1d1-1234-4567-89ab-cdef01234567",
+            "name": "Read Binary File",
+            "type": "n8n-nodes-base.readBinaryFile",
+            "typeVersion": 1,
+            "position": [
+                800,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "file",
+                "operation": "edit",
+                "owner": "AnanthuKaripot",
+                "repository": "telegram_miniapp_manager",
+                "filePath": "quiz/quiz_data.json",
+                "fileContent": "={{$binary.data}}",
+                "commitMessage": "Update quiz data"
+            },
+            "id": "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d",
+            "name": "GitHub",
+            "type": "n8n-nodes-base.github",
+            "typeVersion": 1,
+            "position": [
+                1000,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Schedule Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Execute Command",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Execute Command": {
+            "main": [
+                [
+                    {
+                        "node": "Read Binary File",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Read Binary File": {
+            "main": [
+                [
+                    {
+                        "node": "GitHub",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

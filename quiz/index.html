@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -215,41 +216,119 @@
 
         /* Animations */
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
-        /* Loading */
-        .loading-screen {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        /* Loading & Error States from Flashcards */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: var(--bg);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1000;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s;
         }
 
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid #334155;
+        .loader-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(255, 255, 255, 0.05);
             border-top-color: var(--accent);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 16px;
+            animation: spin 1.2s linear infinite;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 60px;
+            width: auto;
+            max-width: 80px;
+            z-index: 1;
+            filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.2));
+            animation: pulse-logo 2.5s ease-in-out infinite;
+        }
 
+        .loading-text {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse-logo {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-    <div id="loading" class="loading-screen">
-        <div class="spinner"></div>
-        <div>Loading Weekly Quiz...</div>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loader-container">
+            <div class="loader-ring"></div>
+            <img src="assets/logo.png" alt="PG PathScheduler" class="loader-logo">
+        </div>
+        <div class="loading-text" id="loadingText">Preparing Session...</div>
     </div>
 
     <div class="container" id="quiz-container" style="display:none">
@@ -287,8 +366,12 @@
             <div class="score-label">out of 10</div>
         </div>
         <p id="result-message" style="margin-bottom: 30px">Great progress, Doctor!</p>
-        <button onclick="window.location.reload()" class="option" style="justify-content: center; background: var(--accent); color: #000; border:none; width: 100%">Retake Quiz</button>
-        <button onclick="Telegram.WebApp.close()" class="option" style="justify-content: center; margin-top: 12px; background: #334155; border:none; width: 100%">Back to Bot</button>
+        <button onclick="window.location.reload()" class="option"
+            style="justify-content: center; background: var(--accent); color: #000; border:none; width: 100%">Retake
+            Quiz</button>
+        <button onclick="Telegram.WebApp.close()" class="option"
+            style="justify-content: center; margin-top: 12px; background: #334155; border:none; width: 100%">Back to
+            Bot</button>
     </div>
 
     <script>
@@ -304,30 +387,42 @@
             try {
                 // Fetch the generated quiz data
                 // In production, this would be quiz_data.json relative to the app
-                const response = await fetch('../quiz_data.json');
+                const response = await fetch('quiz_data.json');
                 const data = await response.json();
-                
+
                 quizData = data.questions;
                 document.getElementById('subject-tag').innerText = data.subject.toUpperCase();
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('quiz-container').style.display = 'flex';
-                
+
+                document.getElementById('loadingText').textContent = "Starting Quiz...";
+
+                setTimeout(() => {
+                    const overlay = document.getElementById('loadingOverlay');
+                    if (overlay) {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => overlay.remove(), 500);
+                    }
+                    document.getElementById('quiz-container').style.display = 'flex';
+                }, 800);
+
                 showQuestion();
             } catch (error) {
                 console.error('Error loading quiz:', error);
-                document.getElementById('loading').innerText = "Failed to load quiz. Please try again later.";
+                const loadingText = document.getElementById('loadingText');
+                if (loadingText) {
+                    loadingText.textContent = "Failed to load quiz.";
+                    loadingText.style.color = "var(--red)";
+                }
             }
         }
 
         function showQuestion() {
             answered = false;
             const q = quizData[currentIndex];
-            
+
             document.getElementById('q-number').innerText = `Question ${currentIndex + 1}/${quizData.length}`;
             document.getElementById('progress').style.width = `${(currentIndex / quizData.length) * 100}%`;
             document.getElementById('question').innerText = q.question;
-            
+
             const optionsHtml = [
                 { text: q.opa, index: 1 },
                 { text: q.opb, index: 2 },
@@ -339,7 +434,7 @@
                     <div>${opt.text}</div>
                 </div>
             `).join('');
-            
+
             document.getElementById('options-container').innerHTML = optionsHtml;
             document.getElementById('explanation-box').style.display = 'none';
             document.getElementById('next-btn').style.display = 'none';
@@ -348,12 +443,12 @@
         function checkAnswer(selectedIndex, element) {
             if (answered) return;
             answered = true;
-            
+
             const q = quizData[currentIndex];
             const correctIndex = parseInt(q.cop);
-            
+
             const options = document.querySelectorAll('.option');
-            
+
             if (selectedIndex === correctIndex) {
                 element.classList.add('correct');
                 score++;
@@ -385,15 +480,16 @@
             document.getElementById('quiz-container').style.display = 'none';
             document.getElementById('result-screen').style.display = 'block';
             document.getElementById('final-score').innerText = score;
-            
+
             let msg = "Keep practicing, Doctor!";
             if (score >= 8) msg = "Excellent performance! You're on the right track.";
             else if (score >= 5) msg = "Good job! A bit more focus and you'll master this subject.";
-            
+
             document.getElementById('result-message').innerText = msg;
         };
 
         initQuiz();
     </script>
 </body>
+
 </html>
