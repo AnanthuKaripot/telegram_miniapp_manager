@@ -6,14 +6,14 @@ A collection of Telegram Mini Apps and Bot services for PG PathScheduler.
 
 ```
 telegram_miniapp_manager/
+├── pathscheduler/          # Main Module Container
+│   ├── index.html          # Dashboard Hub (Main Entry Point)
+│   ├── quiz/               # Weekly Quiz Mini App
+│   └── flashcards/         # Daily Flashcards Mini App
 ├── bot/                    # Cloudflare Worker Bot Backend
 │   ├── src/index.js       # Main bot logic & API endpoints
 │   ├── scripts/           # Python automation scripts
 │   └── workflows/         # n8n automation configs
-├── quiz/                   # Weekly Quiz Mini App
-│   └── index.html         # Single-page quiz application
-├── flashcards/            # Daily Flashcards Mini App
-│   └── index.html         # Single-page flashcard viewer
 └── CNAME                  # Custom domain config
 ```
 

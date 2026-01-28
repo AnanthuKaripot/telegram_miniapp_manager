@@ -1,0 +1,50 @@
+{
+    "date": "2026-01-26",
+    "cards": [
+        {
+            "id": 423,
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_1_back.png",
+            "question": "What is the name of the skeletal finding in Vitamin D deficiency where the costochondral junctions are enlarged?",
+            "answer": "Rickety Rosary",
+            "explanation": "Seen in active Rickets. It represents expansion of the osteoid tissue at the junction.",
+            "subject": "Pediatrics"
+        },
+        {
+            "id": 203,
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_2_back.png",
+            "question": "Which lung cancer is most strongly associated with non-smokers?",
+            "answer": "Adenocarcinoma",
+            "explanation": "While smoking increases risk for all, Adenocarcinoma is the most common type found in non-smokers and women.",
+            "subject": "Pathology"
+        },
+        {
+            "id": 394,
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_3_back.png",
+            "question": "What is 'Bezold's Abscess'?",
+            "answer": "A complication of Mastoiditis where pus tracks into the Sternocleidomastoid muscle",
+            "explanation": "It results from the erosion of the mastoid tip, causing a deep neck swelling.",
+            "subject": "ENT"
+        },
+        {
+            "id": 759,
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_4_back.png",
+            "question": "What is 'Waterhouse-Friderichsen Syndrome'?",
+            "answer": "Adrenal gland failure due to massive hemorrhage",
+            "explanation": "Typically caused by severe Meningococcemia (Neisseria meningitidis), leading to DIC and shock.",
+            "subject": "Pathology"
+        },
+        {
+            "id": 195,
+            "front_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_front.png",
+            "back_image": "C:\\Users\\anant\\.n8n-files\\flashcards\\card_5_back.png",
+            "question": "What is the characteristic appearance of 'Molluscum Contagiosum' lesions?",
+            "answer": "Umbilicated pearly papules",
+            "explanation": "Caused by a Poxvirus. Histology shows 'Henderson-Paterson bodies' which are intracytoplasmic inclusions.",
+            "subject": "Dermatology"
+        }
+    ]
+}

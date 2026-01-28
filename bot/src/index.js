@@ -5,6 +5,7 @@
  * - GET  /leaderboard?quizId=xxx     - Get top 10 scores for a quiz
  * - POST /submit-score               - Submit quiz score (single attempt enforced)
  * - GET  /user-status?userId&quizId  - Check if user has already completed quiz
+ * - GET  /setup                     - Automate Telegram Menu Button setup
  * - POST /                           - Telegram webhook handler
  * 
  * Environment Bindings:
@@ -17,6 +18,34 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    // Setup Route - Automate Menu Button Configuration
+    if (url.pathname === '/setup') {
+      try {
+        const hubUrl = 'https://telegram.pathexor.in/';
+        const tgRes = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/setChatMenuButton`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            menu_button: {
+              type: 'web_app',
+              text: 'Open App',
+              web_app: { url: hubUrl }
+            }
+          })
+        });
+        const tgData = await tgRes.json();
+        return new Response(JSON.stringify({
+          success: tgData.ok,
+          message: tgData.ok ? 'Menu Button configured successfully!' : 'Failed to configure Menu Button.',
+          telegram_response: tgData
+        }), {
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+      }
+    }
 
     // Handle CORS preflight
     if (request.method === 'OPTIONS') {

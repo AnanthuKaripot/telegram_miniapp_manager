@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PG PathScheduler Hub</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent: #0ea5e9;
+            --accent-glow: rgba(14, 165, 233, 0.3);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            opacity: 0.8;
+        }
+
+        .card-quiz::before {
+            background: #0ea5e9;
+        }
+
+        .card-flash::before {
+            background: #8b5cf6;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        .status-tag {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(14, 165, 233, 0.2);
+            color: #38bdf8;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .footer {
+            margin-top: auto;
+            padding-top: 40px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            opacity: 0.6;
+        }
+
+        .blob {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: -1;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blob" style="top: -100px; right: -100px;"></div>
+    <div class="blob" style="bottom: -100px; left: -100px; background: #8b5cf6;"></div>
+
+    <div class="header">
+        <h1 id="user-greeting">Welcome, Doctor</h1>
+        <p class="subtitle">Select a tool to begin your preparation.</p>
+    </div>
+
+    <div class="grid">
+        <a href="quiz/" class="card card-quiz">
+            <div class="status-tag">Ready</div>
+            <div class="card-icon">📝</div>
+            <div class="card-title">Weekly Quiz</div>
+            <div class="card-desc">Test your knowledge with 10 random subject-wise questions. High-yield MCQs for NEET
+                PG.</div>
+        </a>
+
+        <a href="flashcards/" class="card card-flash">
+            <div class="status-tag">Daily</div>
+            <div class="card-icon">🎴</div>
+            <div class="card-title">Daily Flashcards</div>
+            <div class="card-desc">Quick clinical pearls and mnemonics. Swipe through high-yield facts for better
+                retention.</div>
+        </a>
+
+        <div class="card" style="opacity: 0.5; border-style: dashed; pointer-events: none;">
+            <div class="card-icon">📊</div>
+            <div class="card-title">Performance Analytics</div>
+            <div class="card-desc">Track your progress across subjects. (Coming Soon)</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        PG PathScheduler • Powered by AI
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        // Appearance based on Telegram Theme
+        if (tg.colorScheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Greeting
+        const user = tg.initDataUnsafe?.user;
+        if (user && user.first_name) {
+            document.getElementById('user-greeting').innerText = `Welcome, Dr. ${user.first_name}`;
+        }
+    </script>
+</body>
+
+</html>
