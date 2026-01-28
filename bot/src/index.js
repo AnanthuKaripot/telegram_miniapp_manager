@@ -1,3 +1,19 @@
+/**
+ * PG PathScheduler Telegram Bot - Cloudflare Worker
+ * 
+ * API Endpoints:
+ * - GET  /leaderboard?quizId=xxx     - Get top 10 scores for a quiz
+ * - POST /submit-score               - Submit quiz score (single attempt enforced)
+ * - GET  /user-status?userId&quizId  - Check if user has already completed quiz
+ * - POST /                           - Telegram webhook handler
+ * 
+ * Environment Bindings:
+ * - BOT_TOKEN: Telegram Bot API token (secret)
+ * - QUIZ_DATA: KV namespace for storing quiz scores
+ * 
+ * @module telegram-bot-worker
+ */
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);

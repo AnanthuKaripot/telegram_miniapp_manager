@@ -535,7 +535,7 @@
         </div>
 
         <div class="nav-footer">
-            <button id="prev-btn" class="nav-btn btn-prev" style="display:none">← Previous</button>
+            <button id="prev-btn" class="nav-btn btn-prev" style="display:none">← Back</button>
             <button id="exit-review-btn" class="nav-btn btn-end" style="display:none">End Review</button>
             <button id="next-btn" class="nav-btn btn-next" style="display:none">Next →</button>
             <button id="finish-btn" class="nav-btn btn-finish" style="display:none">Finish Quiz</button>
@@ -588,10 +588,27 @@
     </div>
 
     <script>
+        /**
+         * PG PathScheduler Quiz Mini App
+         * 
+         * Features:
+         * - Single-attempt policy per weekly quiz
+         * - Backend verification via Cloudflare Worker
+         * - Leaderboard integration
+         * - Review mode for completed quizzes
+         * 
+         * @requires Telegram.WebApp
+         * @requires marked.js (optional, for markdown rendering)
+         */
+
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Robust Markdown Parser
+        /**
+         * Parse markdown text to HTML with fallback
+         * @param {string} text - Markdown text to parse
+         * @returns {string} HTML output
+         */
         const parseMD = (text) => {
             if (!text) return '';
             let html = text;
@@ -599,7 +616,7 @@
                 if (typeof marked !== 'undefined' && (marked.parse || typeof marked === 'function')) {
                     html = (marked.parse ? marked.parse(text) : marked(text));
                 } else {
-                    // Robust Fallback for basic Markdown
+                    // Fallback: basic markdown to HTML
                     html = text
                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                         .replace(/__(.*?)__/g, '<strong>$1</strong>')
@@ -614,19 +631,21 @@
             return html;
         };
 
-        // ⚠️ REPLACE THIS with your actual Worker URL after deployment
+        // API Configuration - Cloudflare Worker endpoint
         const API_BASE_URL = 'https://pathscheduler-telegram-bot.pathexor.workers.dev';
 
+        // User data from Telegram WebApp (fallback for testing)
         const user = tg.initDataUnsafe?.user || { id: 123, first_name: 'Guest' };
 
-        let quizId = '';
-        let quizData = [];
-        let userAnswers = [];
-        let currentIndex = 0;
-        let score = 0;
-        let answered = false;
-        let isReviewMode = false;
-        let hasAlreadyPlayed = false;
+        // Quiz State Variables
+        let quizId = '';           // Unique identifier for current quiz (e.g., quiz_2026_01_28_anatomy)
+        let quizData = [];         // Array of question objects from quiz_data.json
+        let userAnswers = [];      // User's selected answers (index-based)
+        let currentIndex = 0;      // Current question index
+        let score = 0;             // Running score count
+        let answered = false;      // Whether current question has been answered
+        let isReviewMode = false;  // Review mode after quiz completion
+        let hasAlreadyPlayed = false; // Flag to prevent re-attempts
 
         function showScreen(screenId) {
             const screens = ['loadingOverlay', 'welcome-gate', 'quiz-container', 'result-screen'];
@@ -670,34 +689,54 @@
                 document.getElementById('gate-subject').innerText = data.subject.toUpperCase();
                 document.getElementById('subject-tag').innerText = data.subject.toUpperCase();
 
-                // 3. Check Persistence
-                document.getElementById('loadingText').textContent = "Safety Check...";
+                // 3. Check if user has already completed this quiz
+                document.getElementById('loadingText').textContent = "Verifying Status...";
+
+                // Reset button states
+                document.getElementById('start-quiz-btn').style.display = "none";
+                document.getElementById('view-results-btn').style.display = "none";
+
+                // Helper: Get local storage key for this user+quiz
+                const localKey = `quiz_attempt_${user.id}_${quizId}`;
+
+                // Step A: Check LOCAL STORAGE first (instant)
+                const localAttempt = localStorage.getItem(localKey);
+                if (localAttempt) {
+                    const attemptData = JSON.parse(localAttempt);
+                    hasAlreadyPlayed = true;
+                    score = attemptData.score;
+                    showResult(score);
+                    showScreen('result-screen');
+                    return; // Exit - user already played (verified locally)
+                }
+
+                // Step B: If not in localStorage, check API
                 try {
                     const statusRes = await fetch(`${API_BASE_URL}/user-status?userId=${user.id}&quizId=${quizId}`);
                     if (statusRes.ok) {
                         const statusData = await statusRes.json();
                         if (statusData.score !== undefined) {
+                            // User played (verified by API) - save to localStorage for future
+                            localStorage.setItem(localKey, JSON.stringify({
+                                score: statusData.score,
+                                date: new Date().toISOString()
+                            }));
                             hasAlreadyPlayed = true;
                             score = statusData.score;
-                            document.getElementById('status-text').innerText = "Already Completed!";
-                            document.getElementById('status-text').style.color = "var(--green)";
-                            document.getElementById('view-results-btn').style.display = "flex";
-                            document.getElementById('start-quiz-btn').style.display = "none";
                             showResult(score);
-                            return;
+                            showScreen('result-screen');
+                            return; // Exit - user already played
                         }
                     }
-                    document.getElementById('status-text').innerText = "Voter ID Verified ✅ Ready to Start.";
-                    document.getElementById('status-text').style.color = "var(--accent)";
-                    document.getElementById('start-quiz-btn').style.display = "flex";
                 } catch (e) {
-                    console.warn("Status check skipped (offline mode)");
-                    document.getElementById('status-text').innerText = "Offline Mode Active.";
-                    document.getElementById('start-quiz-btn').style.display = "flex";
+                    console.warn("API check failed, relying on localStorage:", e);
                 }
 
-                // Show Welcome Gate
-                setTimeout(() => showScreen('welcome-gate'), 800);
+                // Step C: New user - show welcome gate
+                document.getElementById('status-text').innerText = "Ready to Begin ✅";
+                document.getElementById('status-text').style.color = "var(--accent)";
+                document.getElementById('start-quiz-btn').style.display = "flex";
+                setTimeout(() => showScreen('welcome-gate'), 500);
 
             } catch (error) {
                 console.error('Initialization error:', error);
@@ -816,8 +855,10 @@
         };
 
         document.getElementById('finish-btn').onclick = async () => {
-            await submitScore();
+            // Show result first (before marking as played)
             showResult(score);
+            // Then submit and mark as played
+            await submitScore();
         };
 
         function showResult(finalScore) {
@@ -850,12 +891,24 @@
             lv.style.display = lv.style.display === 'none' ? 'block' : 'none';
             if (lv.style.display === 'block') {
                 lv.scrollIntoView({ behavior: 'smooth' });
+                fetchLeaderboard(); // Fetch fresh data when shown
             }
         }
 
         async function submitScore() {
+            // Save to localStorage FIRST (prevents retake)
+            const localKey = `quiz_attempt_${user.id}_${quizId}`;
+            const attemptData = {
+                score: score,
+                date: new Date().toISOString(),
+                submitted: false // Track if API submission succeeded
+            };
+            localStorage.setItem(localKey, JSON.stringify(attemptData));
+            hasAlreadyPlayed = true;
+
+            // Try to submit to backend
             try {
-                await fetch(`${API_BASE_URL}/submit-score`, {
+                const res = await fetch(`${API_BASE_URL}/submit-score`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -866,7 +919,53 @@
                         total: quizData.length
                     })
                 });
-            } catch (e) { console.error("Score submission failed", e); }
+                if (res.ok) {
+                    // Mark as submitted in localStorage
+                    attemptData.submitted = true;
+                    localStorage.setItem(localKey, JSON.stringify(attemptData));
+                } else {
+                    // Queue for retry
+                    queueForRetry(quizId, score);
+                }
+            } catch (e) {
+                console.error("Score submission failed, queued for retry:", e);
+                queueForRetry(quizId, score);
+            }
+        }
+
+        // Queue failed submissions for retry
+        function queueForRetry(quizId, score) {
+            const queue = JSON.parse(localStorage.getItem('pending_submissions') || '[]');
+            queue.push({
+                quizId,
+                userId: user.id,
+                firstName: user.first_name,
+                score,
+                total: quizData.length,
+                timestamp: Date.now()
+            });
+            localStorage.setItem('pending_submissions', JSON.stringify(queue));
+        }
+
+        // Retry pending submissions (called on app load)
+        async function retryPendingSubmissions() {
+            const queue = JSON.parse(localStorage.getItem('pending_submissions') || '[]');
+            if (queue.length === 0) return;
+
+            const remaining = [];
+            for (const item of queue) {
+                try {
+                    const res = await fetch(`${API_BASE_URL}/submit-score`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(item)
+                    });
+                    if (!res.ok) remaining.push(item); // Keep if failed
+                } catch (e) {
+                    remaining.push(item); // Keep if failed
+                }
+            }
+            localStorage.setItem('pending_submissions', JSON.stringify(remaining));
         }
 
         async function fetchLeaderboard() {
@@ -896,6 +995,8 @@
             }
         }
 
+        // On app load: retry any pending submissions, then initialize
+        retryPendingSubmissions();
         initQuiz();
     </script>
 </body>

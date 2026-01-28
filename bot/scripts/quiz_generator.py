@@ -1,9 +1,39 @@
+"""
+Quiz Generator Script for PG PathScheduler
+
+Generates weekly quiz data by selecting random questions from the QBank.
+Used by n8n automation to update quiz_data.json in the GitHub repository.
+
+Usage:
+    python quiz_generator.py
+
+Output:
+    Creates quiz_data.json with structure:
+    {
+        "quiz_id": "quiz_YYYY_MM_DD_subject",
+        "subject": "Subject Name",
+        "questions": [...]
+    }
+"""
+
 import os
 import json
 import random
 from datetime import datetime
 
-def generate_quiz(qbank_path, output_path, num_questions=10):
+
+def generate_quiz(qbank_path: str, output_path: str, num_questions: int = 10) -> None:
+    """
+    Generate a quiz from random questions in the QBank.
+    
+    Args:
+        qbank_path: Path to directory containing subject JSON files
+        output_path: Path where quiz_data.json will be written
+        num_questions: Number of questions to include (default: 10)
+    
+    Returns:
+        None. Writes output to output_path.
+    """
     try:
         # Get all subject files
         subject_files = [f for f in os.listdir(qbank_path) if f.endswith('.json')]
