@@ -22,7 +22,7 @@ export default {
     // Setup Route - Automate Menu Button Configuration
     if (url.pathname === '/setup') {
       try {
-        const hubUrl = 'https://telegram.pathexor.in/';
+        const hubUrl = 'https://telegram.pathexor.in/pathscheduler/';
         const tgRes = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/setChatMenuButton`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -234,7 +234,7 @@ High-yield QBank • AI explanations • Smart flashcards
     inline_keyboard: [
       [
         { text: '📣 Join Channel', url: 'https://t.me/neetpgpathscheduler' },
-        { text: '🌐 Community', url: 'https://www.pathexor.in/pathscheduler/links/' }
+        { text: '🌐 Community', url: 'https://telegram.pathexor.in/pathscheduler/links/' }
       ],
       [
         { text: '🚀 Mini Apps', callback_data: 'apps' },
@@ -281,10 +281,10 @@ Enhance your preparation with our tools:
   const keyboard = {
     inline_keyboard: [
       [
-        { text: '📚 Flashcards', web_app: { url: 'https://telegram.pathexor.in/flashcards/' } }
+        { text: '📚 Flashcards', web_app: { url: 'https://telegram.pathexor.in/pathscheduler/flashcards/' } }
       ],
       [
-        { text: '🧠 Weekly Quiz', web_app: { url: 'https://telegram.pathexor.in/quiz/' } }
+        { text: '🧠 Weekly Quiz', web_app: { url: 'https://telegram.pathexor.in/pathscheduler/quiz/' } }
       ],
       [
         { text: '🔙 Back', callback_data: 'start' }
