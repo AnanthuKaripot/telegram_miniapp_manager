@@ -9,14 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
+            --bg: #0b1120;
+            --card-bg: rgba(30, 41, 59, 0.4);
             --accent: #0ea5e9;
-            --accent-glow: rgba(14, 165, 233, 0.3);
             --text: #f8fafc;
             --text-dim: #94a3b8;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
         * {
@@ -31,187 +29,205 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            overflow-x: hidden;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
         }
 
         .header {
+            text-align: center;
             margin-bottom: 30px;
-            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
             margin-bottom: 4px;
         }
 
         .subtitle {
             color: var(--text-dim);
-            font-size: 0.95rem;
+            font-size: 0.85rem;
+            max-width: 280px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+            padding-left: 4px;
         }
 
         .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            animation: slideUp 0.8s ease-out;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
         }
 
         .card {
             background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 12px 16px;
             text-decoration: none;
             color: inherit;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.2s;
             backdrop-filter: blur(10px);
         }
 
         .card:active {
-            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
+        .card-left {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-logo {
+            width: 100%;
             height: 100%;
-            background: var(--accent);
-            opacity: 0.8;
+            object-fit: cover;
         }
 
-        .card-quiz::before {
-            background: #0ea5e9;
+        .card-right {
+            flex-grow: 1;
+            min-width: 0;
         }
 
-        .card-flash::before {
-            background: #8b5cf6;
-        }
-
-        .card-icon {
-            font-size: 2rem;
-            margin-bottom: 16px;
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2px;
         }
 
         .card-title {
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 8px;
         }
 
         .card-desc {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-dim);
-            line-height: 1.5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .status-tag {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: rgba(14, 165, 233, 0.2);
-            color: #38bdf8;
-            padding: 4px 10px;
-            border-radius: 100px;
             font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-weight: 700;
+            color: var(--text-dim);
+            opacity: 0.8;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .card-chevron {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            opacity: 0.5;
+            padding-left: 8px;
         }
 
         .footer {
-            margin-top: auto;
-            padding-top: 40px;
+            margin-top: 30px;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-dim);
-            opacity: 0.6;
-        }
-
-        .blob {
-            position: fixed;
-            width: 300px;
-            height: 300px;
-            background: var(--accent);
-            filter: blur(100px);
-            opacity: 0.15;
-            z-index: -1;
-            border-radius: 50%;
+            opacity: 0.4;
         }
     </style>
 </head>
 
 <body>
-    <div class="blob" style="top: -100px; right: -100px;"></div>
-    <div class="blob" style="bottom: -100px; left: -100px; background: #8b5cf6;"></div>
-
-    <div class="header">
-        <h1 id="user-greeting">Welcome, Doctor</h1>
-        <p class="subtitle">Select a tool to begin your preparation.</p>
-    </div>
-
-    <div class="grid">
-        <a href="quiz/" class="card card-quiz">
-            <div class="status-tag">Ready</div>
-            <div class="card-icon">📝</div>
-            <div class="card-title">Weekly Quiz</div>
-            <div class="card-desc">Test your knowledge with 10 random subject-wise questions. High-yield MCQs for NEET
-                PG.</div>
-        </a>
-
-        <a href="flashcards/" class="card card-flash">
-            <div class="status-tag">Daily</div>
-            <div class="card-icon">🎴</div>
-            <div class="card-title">Daily Flashcards</div>
-            <div class="card-desc">Quick clinical pearls and mnemonics. Swipe through high-yield facts for better
-                retention.</div>
-        </a>
-
-        <div class="card" style="opacity: 0.5; border-style: dashed; pointer-events: none;">
-            <div class="card-icon">📊</div>
-            <div class="card-title">Performance Analytics</div>
-            <div class="card-desc">Track your progress across subjects. (Coming Soon)</div>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="quiz/assets/logo.png" alt="PG PathScheduler">
+            </div>
+            <h1 id="user-greeting">PG PathScheduler</h1>
+            <p class="subtitle">High-yield medical exam preparation tools. Select a module to begin.</p>
         </div>
-    </div>
 
-    <div class="footer">
-        PG PathScheduler • Powered by AI
+        <div class="section-title">My Tools</div>
+        <div class="grid">
+            <a href="quiz/" class="card">
+                <div class="card-right">
+                    <div class="card-top">
+                        <span class="card-title">Weekly Quiz</span>
+                        <span class="status-tag">READY</span>
+                    </div>
+                    <div class="card-desc">10 random high-yield MCQs</div>
+                </div>
+                <div class="card-chevron">›</div>
+            </a>
+
+            <a href="flashcards/" class="card">
+                <div class="card-right">
+                    <div class="card-top">
+                        <span class="card-title">Daily Flashcards</span>
+                        <span class="status-tag">DAILY</span>
+                    </div>
+                    <div class="card-desc">Clinical pearls and mnemonics</div>
+                </div>
+                <div class="card-chevron">›</div>
+            </a>
+
+            <div class="card" style="opacity: 0.4;">
+                <div class="card-right">
+                    <div class="card-top">
+                        <span class="card-title">Analytics</span>
+                        <span class="status-tag">SOON</span>
+                    </div>
+                    <div class="card-desc">Performance tracking</div>
+                </div>
+                <div class="card-chevron">›</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Powered by Pathexor
+        </div>
     </div>
 
     <script>
