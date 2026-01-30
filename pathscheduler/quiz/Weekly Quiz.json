@@ -1,0 +1,202 @@
+{
+  "name": "Weekly Quiz",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        16,
+        0
+      ],
+      "id": "160a5f7a-00de-4986-bc44-021d23ec89af",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "command": "python c:\\flutter_project\\neet_pg_tools_flutter\\telegram_miniapp_manager\\bot\\scripts\\quiz_generator.py"
+      },
+      "id": "32f6d2d9-604b-4157-bb7c-fd1502047039",
+      "name": "Get quiz questions",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:\\Users\\anant\\.n8n-files\\quiz\\quiz_data.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "d00e8271-0235-45e6-8a00-7dde6b128dbf",
+      "name": "Read json file"
+    },
+    {
+      "parameters": {
+        "chatId": "@neetpgpathscheduler",
+        "text": "=✨ *Daily PG PathScheduler Update!*   \n\nThis week's Leaderboard Quiz is now live! Compete now.",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✨ Start quiz now",
+                    "additionalFields": {
+                      "url": "http://t.me/neet_pg_pathscheduler_quizbot/quiz"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "37e62dd2-55f2-469e-ad43-f68b682d14e3",
+      "name": "Send notification",
+      "webhookId": "1430712c-6234-4aef-ab91-4edda23f4c22",
+      "credentials": {
+        "telegramApi": {
+          "id": "NnSTm6042RG8Mfag",
+          "name": "PG PathScheduler quiz bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "AnanthuKaripot",
+          "mode": "list"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "telegram_miniapp_manager",
+          "mode": "list"
+        },
+        "filePath": "quiz/quiz_data.json",
+        "binaryData": true,
+        "commitMessage": "=quiz for {{$now}}"
+      },
+      "id": "25131d1a-66eb-4af0-b3b4-2f9495dc71e4",
+      "name": "Update GitHub",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        640,
+        0
+      ],
+      "webhookId": "8afe6bdc-fe13-467d-954e-58359e9e047f",
+      "credentials": {
+        "githubApi": {
+          "id": "pGMFc5WqarUVYpIw",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        0
+      ],
+      "id": "9dea8df9-ec47-4438-9bc5-509e7e96a97a",
+      "name": "Wait",
+      "webhookId": "3f69df75-f212-487b-bd50-2b65687892bb"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get quiz questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get quiz questions": {
+      "main": [
+        [
+          {
+            "node": "Read json file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read json file": {
+      "main": [
+        [
+          {
+            "node": "Update GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update GitHub": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Send notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "1811f857-196b-4345-a440-c068ad60d617",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "149ce4ac3837a686782c11e78d8941e3ccb6e9ca11c5625a1afbfd657c77a768"
+  },
+  "id": "Peqk3-E7ZotpeIJ2_7LP-",
+  "tags": []
+}

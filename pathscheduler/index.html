@@ -234,6 +234,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
+        tg.BackButton.hide();
 
         // Appearance based on Telegram Theme
         if (tg.colorScheme === 'dark') {

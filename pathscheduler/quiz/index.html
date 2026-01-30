@@ -7,37 +7,35 @@
     <title>PG PathScheduler Quiz</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --accent: #22d3ee;
+            --bg: #0b1120;
+            --card: rgba(30, 41, 59, 0.4);
+            --accent: #0ea5e9;
             --green: #10b981;
             --red: #ef4444;
             --text: #f8fafc;
             --text-dim: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            margin: 0;
-            padding: 0;
+            min-height: 100vh;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
             overflow-x: hidden;
         }
 
         .container {
-            max-width: 600px;
-            margin: 0 auto;
             width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-            flex-grow: 1;
+            max-width: 400px;
             display: flex;
             flex-direction: column;
         }
@@ -84,6 +82,9 @@
         /* Question Card */
         .card {
             background: var(--card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
@@ -288,10 +289,10 @@
         }
 
         .result-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 30px 20px;
             margin-bottom: 30px;
@@ -603,6 +604,10 @@
 
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            window.history.back();
+        });
 
         /**
          * Parse markdown text to HTML with fallback
@@ -669,6 +674,10 @@
         }
 
         async function initQuiz() {
+            if (tg) {
+                if (tg.setHeaderColor) tg.setHeaderColor('#0b1120');
+                if (tg.setBackgroundColor) tg.setBackgroundColor('#0b1120');
+            }
             try {
                 showScreen('loadingOverlay');
 
@@ -867,7 +876,7 @@
 
             if (hasAlreadyPlayed) {
                 document.getElementById('result-message').innerText = "You have already completed this weekly quiz!";
-                document.getElementById('retry-block').style.display = 'none';
+                // document.getElementById('retry-block').style.display = 'none'; // Element removed in redesign
             } else {
                 let msg = "Keep practicing, Doctor!";
                 if (finalScore >= 8) msg = "Excellent performance! You're on the right track.";

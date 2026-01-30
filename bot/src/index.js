@@ -234,7 +234,7 @@ High-yield QBank • AI explanations • Smart flashcards
     inline_keyboard: [
       [
         { text: '📣 Join Channel', url: 'https://t.me/neetpgpathscheduler' },
-        { text: '🌐 Community', url: 'https://telegram.pathexor.in/pathscheduler/links/' }
+        { text: '🌐 Ecosystem', url: 'https://www.pathexor.in/pathscheduler/links/' }
       ],
       [
         { text: '🚀 Mini Apps', callback_data: 'apps' },
@@ -256,7 +256,7 @@ async function sendHelpMessage(botToken, chatId) {
 
 /start — Welcome & main menu
 /apps — Browse mini apps
-/channels — Join our community
+/channels — Join our ecosystem
 /help — Show this message
 
 ━━━━━━━━━━━━━━━━━━━━━━
@@ -301,7 +301,7 @@ Enhance your preparation with our tools:
 
 async function sendChannelsMessage(botToken, chatId) {
   const channelsText = `
-📢 *Join Our Community*
+📢 *Join Our Ecosystem*
 
 Stay updated with the latest content, tips, and discussions:
 `.trim();
