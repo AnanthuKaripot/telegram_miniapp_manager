@@ -135,6 +135,130 @@ export default {
       });
     }
 
+
+    // ═══════════════════════════════════════════════════════════════
+    // CHALLENGE MODE ENDPOINTS
+    // ═══════════════════════════════════════════════════════════════
+
+    // 1. Create Challenge
+    if (url.pathname === '/create-challenge' && request.method === 'POST') {
+      try {
+        const data = await request.json();
+
+        // Basic validation
+        if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
+          return new Response('Invalid payload: questions array required', { status: 400 });
+        }
+
+        const challengeId = crypto.randomUUID().split('-')[0]; // Short ID (8 chars) is enough for casual use? Or full UUID?
+        // Let's use a slightly longer ID to be safe: 12 chars
+        const id = crypto.randomUUID().substr(0, 12);
+
+        // Store challenge data (Expire in 14 days)
+        // Key: challenge:DATA:{id}
+        await env.QUIZ_DATA.put(`challenge:DATA:${id}`, JSON.stringify(data), { expirationTtl: 1209600 });
+
+        return new Response(JSON.stringify({ id: id }), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } catch (e) {
+        return new Response(`Error: ${e.message}`, { status: 500 });
+      }
+    }
+
+    // 2. Get Challenge Data
+    if (url.pathname === '/get-challenge') {
+      const id = url.searchParams.get('id');
+      if (!id) return new Response('Missing ID', { status: 400 });
+
+      const data = await env.QUIZ_DATA.get(`challenge:DATA:${id}`);
+
+      if (!data) return new Response('Challenge not found or expired', { status: 404 });
+
+      return new Response(data, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    // 3. Submit Challenge Score
+    if (url.pathname === '/submit-challenge-score' && request.method === 'POST') {
+      try {
+        const { challengeId, userId, firstName, score, total, timeTaken } = await request.json();
+
+        if (!challengeId || !userId) return new Response('Missing params', { status: 400 });
+
+        const key = `challenge:SCORE:${challengeId}:${userId}`;
+
+        // Check for existing attempt
+        const existing = await env.QUIZ_DATA.get(key);
+        if (existing) {
+          return new Response(JSON.stringify({ error: 'Already submitted' }), {
+            status: 403,
+            headers: { 'Access-Control-Allow-Origin': '*' }
+          });
+        }
+
+        const scoreData = {
+          userId,
+          firstName: firstName || 'Anonymous',
+          score,
+          total,
+          timeTaken,
+          submittedAt: new Date().toISOString()
+        };
+
+        // Store score (Expire in 14 days to match challenge)
+        await env.QUIZ_DATA.put(key, JSON.stringify(scoreData), { expirationTtl: 1209600 });
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } catch (e) {
+        return new Response(`Error: ${e.message}`, { status: 500 });
+      }
+    }
+
+    // 4. Get Challenge Leaderboard
+    if (url.pathname === '/challenge-leaderboard') {
+      const id = url.searchParams.get('id');
+      if (!id) return new Response('Missing ID', { status: 400 });
+
+      try {
+        const list = await env.QUIZ_DATA.list({ prefix: `challenge:SCORE:${id}:` });
+        const scores = [];
+
+        for (const key of list.keys) {
+          const val = await env.QUIZ_DATA.get(key.name);
+          if (val) scores.push(JSON.parse(val));
+        }
+
+        // Sort: High Score > Low Time > Early Submission
+        scores.sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          if (a.timeTaken !== b.timeTaken) return (a.timeTaken || 0) - (b.timeTaken || 0); // Less time is better? Or maybe just ignore time if not tracked accurately
+          return 0;
+        });
+
+        return new Response(JSON.stringify(scores), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } catch (e) {
+        return new Response(`Error: ${e.message}`, { status: 500 });
+      }
+    }
+
     // Telegram Webhook Handler (Original Logic)
     if (request.method !== 'POST') {
       return new Response('OK', { status: 200 });
@@ -144,8 +268,18 @@ export default {
       const update = await request.json();
 
       // Handle /start command
-      if (update.message?.text === '/start') {
-        await sendWelcomeMessage(env.BOT_TOKEN, update.message.chat.id, update.message.from.first_name);
+      if (update.message?.text?.startsWith('/start')) {
+        const text = update.message.text;
+        const param = text.split(' ')[1]; // Extract payload (e.g., 'challenge_123')
+
+        if (param && param.startsWith('challenge_')) {
+          // Handle Challenge Deep Link
+          const challengeId = param.replace('challenge_', '');
+          await sendChallengeInvite(env.BOT_TOKEN, update.message.chat.id, update.message.from.first_name, challengeId);
+        } else {
+          // Normal Start
+          await sendWelcomeMessage(env.BOT_TOKEN, update.message.chat.id, update.message.from.first_name);
+        }
       }
 
       // Handle /help command
@@ -345,4 +479,37 @@ async function sendTelegramMessage(botToken, chatId, text, keyboard) {
     const error = await response.text();
     console.error('Telegram API error:', error);
   }
+}
+
+async function sendChallengeInvite(botToken, chatId, firstName, challengeId) {
+  const text = `
+⚔️ *Challenge Accepted?*
+
+Hey Dr. ${firstName}, you've been challenged to a quiz!
+
+• 10 High-Yield Questions
+• Timed Mode
+• Beat the Score
+
+👇 *Tap below to play now!*
+`.trim();
+
+  // Web App URL with start param for Challenge Mode
+  // Note: We use the hosted URL for the Mini App
+  const webAppUrl = 'https://telegram.pathexor.in/pathscheduler/quiz/';
+
+  const keyboard = {
+    inline_keyboard: [
+      [
+        {
+          text: '⚔️ Accept Challenge',
+          web_app: {
+            url: `${webAppUrl}?start_param=challenge_${challengeId}`
+          }
+        }
+      ]
+    ]
+  };
+
+  await sendTelegramMessage(botToken, chatId, text, keyboard);
 }

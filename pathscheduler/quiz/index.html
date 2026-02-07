@@ -650,7 +650,9 @@
         let score = 0;             // Running score count
         let answered = false;      // Whether current question has been answered
         let isReviewMode = false;  // Review mode after quiz completion
+
         let hasAlreadyPlayed = false; // Flag to prevent re-attempts
+        let isChallengeMode = false; // Flag for Challenge Mode
 
         function showScreen(screenId) {
             const screens = ['loadingOverlay', 'welcome-gate', 'quiz-container', 'result-screen'];
@@ -687,16 +689,38 @@
                 }
 
                 // 2. Fetch Quiz Data
-                document.getElementById('loadingText').textContent = "Syncing Questions...";
-                const response = await fetch(`quiz_data.json?v=${Date.now()}`);
-                const data = await response.json();
+                const urlParams = new URLSearchParams(window.location.search);
+                const startParam = tg.initDataUnsafe?.start_param || urlParams.get('start_param');
 
-                quizId = data.quiz_id || 'legacy_quiz';
-                quizData = data.questions;
+                if (startParam && startParam.startsWith('challenge_')) {
+                    // --- CHALLENGE MODE ---
+                    isChallengeMode = true;
+                    const challengeId = startParam.replace('challenge_', '');
+                    document.getElementById('loadingText').textContent = "Loading Challenge...";
+
+                    const res = await fetch(`${API_BASE_URL}/get-challenge?id=${challengeId}`);
+                    if (!res.ok) throw new Error("Challenge not found");
+
+                    const cData = await res.json();
+                    quizId = challengeId;
+                    quizData = cData.questions;
+
+                    document.getElementById('welcome-title').innerText = cData.title || "Challenge Mode";
+                    document.getElementById('gate-subject').innerText = (cData.subject || "Mixed").toUpperCase();
+                    document.getElementById('subject-tag').innerText = "CHALLENGE";
+                } else {
+                    // --- WEEKLY QUIZ MODE ---
+                    document.getElementById('loadingText').textContent = "Syncing Questions...";
+                    const response = await fetch(`quiz_data.json?v=${Date.now()}`);
+                    const data = await response.json();
+
+                    quizId = data.quiz_id || 'legacy_quiz';
+                    quizData = data.questions;
+                    document.getElementById('gate-subject').innerText = data.subject.toUpperCase();
+                    document.getElementById('subject-tag').innerText = data.subject.toUpperCase();
+                }
+
                 userAnswers = new Array(quizData.length).fill(null);
-
-                document.getElementById('gate-subject').innerText = data.subject.toUpperCase();
-                document.getElementById('subject-tag').innerText = data.subject.toUpperCase();
 
                 // 3. Check if user has already completed this quiz
                 document.getElementById('loadingText').textContent = "Verifying Status...";
@@ -837,7 +861,8 @@
             }
 
             // Show explanation
-            document.getElementById('explanation-text').innerHTML = parseMD(q.explanation);
+            const explanationContent = q.explanation || q.exp || "No explanation available.";
+            document.getElementById('explanation-text').innerHTML = parseMD(explanationContent);
             document.getElementById('explanation-box').style.display = 'block';
 
             // Show next/finish button
@@ -917,16 +942,31 @@
 
             // Try to submit to backend
             try {
-                const res = await fetch(`${API_BASE_URL}/submit-score`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        quizId: quizId,
+                let url = `${API_BASE_URL}/submit-score`;
+                let payload = {
+                    quizId: quizId,
+                    userId: user.id,
+                    firstName: user.first_name,
+                    score: score,
+                    total: quizData.length
+                };
+
+                if (isChallengeMode) {
+                    url = `${API_BASE_URL}/submit-challenge-score`;
+                    payload = {
+                        challengeId: quizId,
                         userId: user.id,
                         firstName: user.first_name,
                         score: score,
-                        total: quizData.length
-                    })
+                        total: quizData.length,
+                        timeTaken: 0 // TODO: Track time
+                    };
+                }
+
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
                 if (res.ok) {
                     // Mark as submitted in localStorage
@@ -980,7 +1020,12 @@
         async function fetchLeaderboard() {
             try {
                 console.log("Fetching leaderboard for quizId:", quizId);
-                const res = await fetch(`${API_BASE_URL}/leaderboard?quizId=${quizId}`);
+                let url = `${API_BASE_URL}/leaderboard?quizId=${quizId}`;
+                if (isChallengeMode) {
+                    url = `${API_BASE_URL}/challenge-leaderboard?id=${quizId}`;
+                }
+
+                const res = await fetch(url);
                 const data = await res.json();
 
                 const body = document.getElementById('leaderboard-body');
