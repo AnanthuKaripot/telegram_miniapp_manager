@@ -440,7 +440,18 @@
             tg.ready();
             tg.BackButton.show();
             tg.BackButton.onClick(() => {
-                window.history.back();
+                if (document.getElementById('completeScreen').style.display === 'flex') {
+                    document.getElementById('completeScreen').style.display = 'none';
+                    document.getElementById('app').style.display = 'flex';
+                } else if (currentIndex > 0) {
+                    prevCard();
+                } else {
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        tg.close();
+                    }
+                }
             });
             // Set header color to match app
             if (tg.setHeaderColor) tg.setHeaderColor('#0b1120');

@@ -606,7 +606,18 @@
         tg.expand();
         tg.BackButton.show();
         tg.BackButton.onClick(() => {
-            window.history.back();
+            if (isReviewMode) {
+                isReviewMode = false;
+                showScreen('result-screen');
+            } else if (document.getElementById('quiz-container').style.display === 'flex') {
+                showScreen('welcome-gate');
+            } else {
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    tg.close();
+                }
+            }
         });
 
         /**
