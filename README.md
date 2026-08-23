@@ -47,10 +47,20 @@ All components are hosted statically. Updates are live immediately upon merging 
 
 ### Backend (Cloudflare Workers)
 The backend manages users, scores, and storage.
-```bash
+
+**Deploy (recommended on Windows — API token, no browser login):**
+
+1. Create an API token: [Cloudflare Dashboard → API Tokens](https://dash.cloudflare.com/profile/api-tokens) → **Edit Cloudflare Workers** template.
+2. In PowerShell (session only — do not commit the token):
+
+```powershell
 cd bot
-npx wrangler deploy
+$env:CLOUDFLARE_API_TOKEN = "paste-your-token-here"
+$env:NODE_OPTIONS = "--use-system-ca"
+npm run deploy
 ```
+
+If `wrangler login` fails with certificate errors, use the API token flow above instead of OAuth.
 
 ### 🤖 Telegram Configuration (@BotFather)
 To maintain the professional "Main App" experience:

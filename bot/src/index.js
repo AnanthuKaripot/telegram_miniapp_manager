@@ -313,9 +313,6 @@ export default {
           case 'start':
             await sendWelcomeMessage(env.BOT_TOKEN, chatId, firstName);
             break;
-          case 'apps':
-            await sendAppsMessage(env.BOT_TOKEN, chatId);
-            break;
           case 'noop':
             // Do nothing for decorative buttons
             break;
@@ -349,6 +346,33 @@ async function answerCallbackQueryWithText(botToken, callbackQueryId, text) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// INLINE KEYBOARDS
+// ═══════════════════════════════════════════════════════════════
+
+const FLASHCARDS_WEB_APP = {
+  text: '📚 Flashcards',
+  web_app: { url: 'https://telegram.pathexor.in/pathscheduler/flashcards/' }
+};
+
+const WEEKLY_QUIZ_WEB_APP = {
+  text: '🧠 Weekly Quiz',
+  web_app: { url: 'https://telegram.pathexor.in/pathscheduler/quiz/' }
+};
+
+function mainMenuKeyboard() {
+  return {
+    inline_keyboard: [
+      [
+        { text: '📣 Join Channel', url: 'https://t.me/neetpgpathscheduler' },
+        { text: '🌐 Ecosystem', url: 'https://www.pathexor.in/pathscheduler/links/' }
+      ],
+      [FLASHCARDS_WEB_APP, WEEKLY_QUIZ_WEB_APP],
+      [{ text: '💡 Help', callback_data: 'help' }]
+    ]
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
 // WELCOME MESSAGE
 // ═══════════════════════════════════════════════════════════════
 
@@ -364,20 +388,7 @@ High-yield QBank • AI explanations • Smart flashcards
 ⬇️ *Get Started*
 `.trim();
 
-  const keyboard = {
-    inline_keyboard: [
-      [
-        { text: '📣 Join Channel', url: 'https://t.me/neetpgpathscheduler' },
-        { text: '🌐 Ecosystem', url: 'https://www.pathexor.in/pathscheduler/links/' }
-      ],
-      [
-        { text: '🚀 Mini Apps', callback_data: 'apps' },
-        { text: '💡 Help', callback_data: 'help' }
-      ]
-    ]
-  };
-
-  await sendTelegramMessage(botToken, chatId, welcomeText, keyboard);
+  await sendTelegramMessage(botToken, chatId, welcomeText, mainMenuKeyboard());
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -389,7 +400,7 @@ async function sendHelpMessage(botToken, chatId) {
 📖 *Available Commands*
 
 /start — Welcome & main menu
-/apps — Browse mini apps
+/apps — Open Flashcards or Weekly Quiz
 /channels — Join our ecosystem
 /help — Show this message
 
@@ -402,27 +413,20 @@ Need assistance? Contact us via our official channel.
 }
 
 // ═══════════════════════════════════════════════════════════════
-// APPS MESSAGE
+// APPS MESSAGE (/apps — same tools as main menu)
 // ═══════════════════════════════════════════════════════════════
 
 async function sendAppsMessage(botToken, chatId) {
   const appsText = `
-🚀 *PG PathScheduler Mini Apps*
+🚀 *PG PathScheduler Tools*
 
-Enhance your preparation with our tools:
+Pick a tool below:
 `.trim();
 
   const keyboard = {
     inline_keyboard: [
-      [
-        { text: '📚 Flashcards', web_app: { url: 'https://telegram.pathexor.in/pathscheduler/flashcards/' } }
-      ],
-      [
-        { text: '🧠 Weekly Quiz', web_app: { url: 'https://telegram.pathexor.in/pathscheduler/quiz/' } }
-      ],
-      [
-        { text: '🔙 Back', callback_data: 'start' }
-      ]
+      [FLASHCARDS_WEB_APP, WEEKLY_QUIZ_WEB_APP],
+      [{ text: '🔙 Back to Menu', callback_data: 'start' }]
     ]
   };
 

@@ -94,7 +94,7 @@
           "value": "telegram_miniapp_manager",
           "mode": "list"
         },
-        "filePath": "quiz/quiz_data.json",
+        "filePath": "pathscheduler/quiz/quiz_data.json",
         "binaryData": true,
         "commitMessage": "=quiz for {{$now}}"
       },

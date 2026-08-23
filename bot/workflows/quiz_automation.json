@@ -51,7 +51,7 @@
                 "operation": "edit",
                 "owner": "AnanthuKaripot",
                 "repository": "telegram_miniapp_manager",
-                "filePath": "quiz/quiz_data.json",
+                "filePath": "pathscheduler/quiz/quiz_data.json",
                 "fileContent": "={{$binary.data}}",
                 "commitMessage": "Update quiz data"
             },
