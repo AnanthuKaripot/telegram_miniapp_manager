@@ -521,6 +521,7 @@
         <div class="header">
             <span id="subject-tag" class="subject-tag">SUBJECT</span>
             <span id="q-number" style="opacity:0.7">Question 1/10</span>
+            <span id="answer-timer" class="timer" aria-live="polite">00:00</span>
         </div>
 
         <div class="card">
@@ -664,6 +665,45 @@
 
         let hasAlreadyPlayed = false; // Flag to prevent re-attempts
         let isChallengeMode = false; // Flag for Challenge Mode
+        let answerTimerId = null;
+        let questionStartedAt = 0;
+        let totalAnswerTimeMs = 0;
+
+        function stopAnswerTimer() {
+            if (answerTimerId !== null) {
+                clearInterval(answerTimerId);
+                answerTimerId = null;
+            }
+            if (questionStartedAt) {
+                totalAnswerTimeMs += Date.now() - questionStartedAt;
+                questionStartedAt = 0;
+            }
+        }
+
+        function startAnswerTimer() {
+            stopAnswerTimer();
+            const startedAt = Date.now();
+            const timer = document.getElementById('answer-timer');
+            const updateTimer = () => {
+                const elapsedSeconds = Math.floor((Date.now() - startedAt) / 1000);
+                const minutes = Math.floor(elapsedSeconds / 60);
+                const seconds = elapsedSeconds % 60;
+                timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            };
+            updateTimer();
+            questionStartedAt = startedAt;
+            answerTimerId = setInterval(() => {
+                updateTimer();
+            }, 1000);
+        }
+
+        function showAnswerNavigation() {
+            if (currentIndex < quizData.length - 1) {
+                document.getElementById('next-btn').style.display = 'flex';
+            } else {
+                document.getElementById('finish-btn').style.display = 'flex';
+            }
+        }
 
         function showScreen(screenId) {
             const screens = ['loadingOverlay', 'welcome-gate', 'quiz-container', 'result-screen'];
@@ -848,12 +888,14 @@
                 // Reset visibility for other buttons when not in review
                 document.getElementById('next-btn').style.visibility = 'visible';
                 document.getElementById('prev-btn').style.visibility = 'visible';
+                startAnswerTimer();
             }
         }
 
         function checkAnswer(selectedIndex, element) {
             if (answered) return;
             answered = true;
+            stopAnswerTimer();
             userAnswers[currentIndex] = selectedIndex;
 
             const q = quizData[currentIndex];
@@ -877,11 +919,7 @@
             document.getElementById('explanation-box').style.display = 'block';
 
             // Show next/finish button
-            if (currentIndex < quizData.length - 1) {
-                document.getElementById('next-btn').style.display = 'flex';
-            } else {
-                document.getElementById('finish-btn').style.display = 'flex';
-            }
+            showAnswerNavigation();
         }
 
         document.getElementById('next-btn').onclick = () => {
@@ -970,8 +1008,10 @@
                         firstName: user.first_name,
                         score: score,
                         total: quizData.length,
-                        timeTaken: 0 // TODO: Track time
+                        timeTaken: Math.round(totalAnswerTimeMs / 1000)
                     };
+                } else {
+                    payload.timeTaken = Math.round(totalAnswerTimeMs / 1000);
                 }
 
                 const res = await fetch(url, {
@@ -985,16 +1025,16 @@
                     localStorage.setItem(localKey, JSON.stringify(attemptData));
                 } else {
                     // Queue for retry
-                    queueForRetry(quizId, score);
+                    queueForRetry(quizId, score, isChallengeMode, Math.round(totalAnswerTimeMs / 1000));
                 }
             } catch (e) {
                 console.error("Score submission failed, queued for retry:", e);
-                queueForRetry(quizId, score);
+                queueForRetry(quizId, score, isChallengeMode, Math.round(totalAnswerTimeMs / 1000));
             }
         }
 
         // Queue failed submissions for retry
-        function queueForRetry(quizId, score) {
+        function queueForRetry(quizId, score, challengeMode, timeTaken) {
             const queue = JSON.parse(localStorage.getItem('pending_submissions') || '[]');
             queue.push({
                 quizId,
@@ -1002,6 +1042,8 @@
                 firstName: user.first_name,
                 score,
                 total: quizData.length,
+                isChallengeMode: challengeMode,
+                timeTaken,
                 timestamp: Date.now()
             });
             localStorage.setItem('pending_submissions', JSON.stringify(queue));
@@ -1015,10 +1057,19 @@
             const remaining = [];
             for (const item of queue) {
                 try {
-                    const res = await fetch(`${API_BASE_URL}/submit-score`, {
+                    const endpoint = item.isChallengeMode ? 'submit-challenge-score' : 'submit-score';
+                    const payload = item.isChallengeMode ? {
+                        challengeId: item.quizId,
+                        userId: item.userId,
+                        firstName: item.firstName,
+                        score: item.score,
+                        total: item.total,
+                        timeTaken: item.timeTaken
+                    } : item;
+                    const res = await fetch(`${API_BASE_URL}/${endpoint}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(item)
+                        body: JSON.stringify(payload)
                     });
                     if (!res.ok) remaining.push(item); // Keep if failed
                 } catch (e) {
@@ -1044,10 +1095,13 @@
                     throw new Error("Invalid data format");
                 }
 
+                const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, character => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+                }[character]));
                 body.innerHTML = data.map((entry, idx) => `
                     <tr class="${String(entry.userId) === String(user.id) ? 'user-highlight' : ''}">
                         <td><span class="rank-badge rank-${idx + 1}">${idx + 1}</span></td>
-                        <td>Dr. ${entry.firstName}</td>
+                        <td>Dr. ${escapeHtml(entry.firstName)}</td>
                         <td>${entry.score}/${entry.total}</td>
                     </tr>
                 `).join('');

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "deploy:win": "powershell -NoProfile -Command \"$env:NODE_OPTIONS='--use-system-ca'; if (-not $env:CLOUDFLARE_API_TOKEN) { Write-Error 'Set CLOUDFLARE_API_TOKEN first (see bot/README deploy section)'; exit 1 }; wrangler deploy\""
+    "deploy:win": "powershell -NoProfile -Command \"$env:NODE_OPTIONS='--use-system-ca'; if (-not $env:CLOUDFLARE_API_TOKEN) { Write-Error 'Set CLOUDFLARE_API_TOKEN first (see DEPLOYMENT.md)'; exit 1 }; wrangler deploy\""
   },
   "devDependencies": {
     "wrangler": "^3.0.0"

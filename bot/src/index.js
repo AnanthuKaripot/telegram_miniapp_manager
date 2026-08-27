@@ -70,8 +70,11 @@ export default {
           const val = await env.QUIZ_DATA.get(key.name);
           if (val) scores.push(JSON.parse(val));
         }
-        // Sort by score (high to low) and take top 10
-        scores.sort((a, b) => b.score - a.score);
+        // Sort by score (high to low), then answering time (low to high).
+        scores.sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return (a.timeTaken ?? Number.MAX_SAFE_INTEGER) - (b.timeTaken ?? Number.MAX_SAFE_INTEGER);
+        });
         const top10 = scores.slice(0, 10);
 
         return new Response(JSON.stringify(top10), {
@@ -89,9 +92,12 @@ export default {
     if (url.pathname === '/submit-score' && request.method === 'POST') {
       try {
         const data = await request.json();
-        const { quizId, userId, firstName, score, total } = data;
+        const { quizId, userId, firstName, score, total, timeTaken } = data;
 
-        if (!quizId || !userId) return new Response('Missing parameters', { status: 400 });
+        if (!quizId || !userId || !Number.isInteger(score) || !Number.isInteger(total) ||
+          total < 1 || score < 0 || score > total || !Number.isFinite(timeTaken) || timeTaken < 0) {
+          return new Response('Invalid parameters', { status: 400 });
+        }
 
         const kvKey = `quiz:${quizId}:user:${userId}`;
 
@@ -105,7 +111,7 @@ export default {
         }
 
         // Save score
-        const entry = { quizId, userId, firstName, score, total, date: new Date().toISOString() };
+        const entry = { quizId, userId, firstName, score, total, timeTaken, date: new Date().toISOString() };
         await env.QUIZ_DATA.put(kvKey, JSON.stringify(entry));
 
         return new Response(JSON.stringify({ success: true }), {
@@ -150,9 +156,7 @@ export default {
           return new Response('Invalid payload: questions array required', { status: 400 });
         }
 
-        const challengeId = crypto.randomUUID().split('-')[0]; // Short ID (8 chars) is enough for casual use? Or full UUID?
-        // Let's use a slightly longer ID to be safe: 12 chars
-        const id = crypto.randomUUID().substr(0, 12);
+        const id = crypto.randomUUID().slice(0, 12);
 
         // Store challenge data (Expire in 14 days)
         // Key: challenge:DATA:{id}
@@ -191,7 +195,10 @@ export default {
       try {
         const { challengeId, userId, firstName, score, total, timeTaken } = await request.json();
 
-        if (!challengeId || !userId) return new Response('Missing params', { status: 400 });
+        if (!challengeId || !userId || !Number.isInteger(score) || !Number.isInteger(total) ||
+          total < 1 || score < 0 || score > total || !Number.isFinite(timeTaken) || timeTaken < 0) {
+          return new Response('Invalid parameters', { status: 400 });
+        }
 
         const key = `challenge:SCORE:${challengeId}:${userId}`;
 
