@@ -2,6 +2,12 @@
 
 A premium suite of Telegram Mini Apps (TMAs) designed for high-yield medical exam preparation. This ecosystem provides a central dashboard hub to access study tools like randomized quizzes and clinical flashcards.
 
+## Relationship To Other Projects
+
+`PG-PathScheduler` is the main app and `Qbank-admin-tools` is the source of truth for question edits, new PYQs, and verified report corrections. This repository is a downstream publishing channel: the weekly quiz generator reads the main app's QBank, selects 10 questions, and publishes quiz data to the Telegram mini-app. The standalone `flashcard_generator` publishes daily flashcard content here.
+
+For local n8n runs, set `TELEGRAM_MINIAPP_MANAGER_DIR` to this repository's absolute path. Set `QBANK_DIR` only if the main app is not in the sibling `PG-PathScheduler` directory.
+
 ## 🚀 Vision
 To provide medical students and professionals with a seamless, "app-like" experience directly within Telegram, optimized for efficiency and knowledge retention.
 

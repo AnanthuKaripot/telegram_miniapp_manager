@@ -5,6 +5,8 @@ account_id = "e6ca2cafc32894413720a42a25bc09b9"
 
 # The BOT_TOKEN will be added as a secret via:
 # npx wrangler secret put BOT_TOKEN
+# The GitHub token must have read access to telegram-mini-app-data-files:
+# npx wrangler secret put GITHUB_TOKEN
 
 [[kv_namespaces]]
 binding = "QUIZ_DATA"

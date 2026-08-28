@@ -17,3 +17,6 @@ __pycache__/
 env/
 venv/
 ENV/
+
+# Generated quiz output
+data/quiz/

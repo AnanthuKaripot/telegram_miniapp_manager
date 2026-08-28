@@ -21,7 +21,7 @@
         },
         {
             "parameters": {
-                "command": "python c:\\flutter_project\\neet_pg_tools_flutter\\telegram_miniapp_manager\\bot\\scripts\\quiz_generator.py"
+                "command": "set \"QUIZ_OUTPUT_DIR=C:\\Users\\anant\\.n8n-files\\quiz\" && python \"C:\\Users\\anant\\Projects\\PG PathScheduler\\telegram_miniapp_manager\\bot\\scripts\\quiz_generator.py\""
             },
             "id": "e30e1c1b-b7e1-4c12-9c3a-d66760634963",
             "name": "Execute Command",
@@ -50,9 +50,10 @@
                 "resource": "file",
                 "operation": "edit",
                 "owner": "AnanthuKaripot",
-                "repository": "telegram_miniapp_manager",
+                "repository": "telegram-mini-app-data-files",
                 "filePath": "pathscheduler/quiz/quiz_data.json",
-                "fileContent": "={{$binary.data}}",
+                "binaryData": true,
+                "binaryPropertyName": "data",
                 "commitMessage": "Update quiz data"
             },
             "id": "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d",

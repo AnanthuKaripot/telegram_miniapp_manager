@@ -47,6 +47,40 @@ export default {
       }
     }
 
+    // Serve the private weekly quiz repository without exposing its GitHub token.
+    if (url.pathname === '/weekly-quiz' && request.method === 'GET') {
+      if (!env.GITHUB_TOKEN) {
+        return new Response('Quiz service is not configured', { status: 503 });
+      }
+
+      try {
+        const githubResponse = await fetch(
+          'https://api.github.com/repos/AnanthuKaripot/telegram-mini-app-data-files/contents/pathscheduler/quiz/quiz_data.json',
+          {
+            headers: {
+              Accept: 'application/vnd.github.raw+json',
+              Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+              'User-Agent': 'pathscheduler-telegram-bot',
+            },
+          },
+        );
+
+        if (!githubResponse.ok) {
+          return new Response('Quiz data unavailable', { status: 502 });
+        }
+
+        return new Response(await githubResponse.text(), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-store',
+          },
+        });
+      } catch (e) {
+        return new Response('Quiz data unavailable', { status: 502 });
+      }
+    }
+
     // Handle CORS preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, {

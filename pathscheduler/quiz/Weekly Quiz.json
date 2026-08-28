@@ -14,7 +14,7 @@
     },
     {
       "parameters": {
-        "command": "python c:\\flutter_project\\neet_pg_tools_flutter\\telegram_miniapp_manager\\bot\\scripts\\quiz_generator.py"
+        "command": "set \"QUIZ_OUTPUT_DIR=C:\\Users\\anant\\.n8n-files\\quiz\" && python \"C:\\Users\\anant\\Projects\\PG PathScheduler\\telegram_miniapp_manager\\bot\\scripts\\quiz_generator.py\""
       },
       "id": "32f6d2d9-604b-4157-bb7c-fd1502047039",
       "name": "Get quiz questions",
@@ -91,11 +91,12 @@
         },
         "repository": {
           "__rl": true,
-          "value": "telegram_miniapp_manager",
+          "value": "telegram-mini-app-data-files",
           "mode": "list"
         },
         "filePath": "pathscheduler/quiz/quiz_data.json",
         "binaryData": true,
+        "binaryPropertyName": "data",
         "commitMessage": "=quiz for {{$now}}"
       },
       "id": "25131d1a-66eb-4af0-b3b4-2f9495dc71e4",

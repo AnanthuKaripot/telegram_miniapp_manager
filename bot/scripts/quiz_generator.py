@@ -125,14 +125,18 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     repo_root = os.path.normpath(os.path.join(script_dir, "..", ".."))
 
-    QBANK_DIR = os.environ.get(
-        "QBANK_DIR",
-        os.path.normpath(
-            os.path.join(repo_root, "..", "neetpg_app", "assets", "web", "qbank")
-        ),
+    default_qbank_dir = os.path.normpath(
+        os.path.join(repo_root, "..", "PG-PathScheduler", "assets", "web", "qbank")
     )
+    if not os.path.isdir(default_qbank_dir):
+        default_qbank_dir = os.path.join(repo_root, "assets", "web", "qbank")
+
+    QBANK_DIR = os.environ.get("QBANK_DIR", default_qbank_dir)
     OUTPUT_DIR = os.environ.get(
-        "QUIZ_OUTPUT_DIR", os.path.join(os.path.expanduser("~"), ".n8n-files", "quiz")
+        "QUIZ_OUTPUT_DIR",
+        os.path.join(
+            os.path.expanduser("~"), ".n8n-files", "quiz"
+        ),
     )
     OUTPUT_FILE = os.path.join(OUTPUT_DIR, "quiz_data.json")
 

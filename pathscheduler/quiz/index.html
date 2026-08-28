@@ -762,7 +762,7 @@
                 } else {
                     // --- WEEKLY QUIZ MODE ---
                     document.getElementById('loadingText').textContent = "Syncing Questions...";
-                    const response = await fetch(`quiz_data.json?v=${Date.now()}`);
+                    const response = await fetch(`${API_BASE_URL}/weekly-quiz?v=${Date.now()}`);
                     const data = await response.json();
 
                     quizId = data.quiz_id || 'legacy_quiz';

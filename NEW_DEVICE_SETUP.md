@@ -5,10 +5,12 @@ Both folders are independent Git repositories. Clone each repository into the ne
 ## Clone
 
 ```powershell
-mkdir C:\flutter_project\neet_pg_tools_flutter
-cd C:\flutter_project\neet_pg_tools_flutter
+$workspace = Join-Path $HOME "Projects\PG PathScheduler"
+New-Item -ItemType Directory -Force $workspace | Out-Null
+Set-Location $workspace
 git clone git@github.com:AnanthuKaripot/webpage-for-pathexor.git "pathexor web"
 git clone git@github.com:AnanthuKaripot/telegram_miniapp_manager.git telegram_miniapp_manager
+git clone git@github.com:AnanthuKaripot/PG-PathScheduler.git PG-PathScheduler
 ```
 
 ## Static websites
@@ -20,8 +22,15 @@ No build step is required. GitHub Pages serves the committed HTML, CSS, JavaScri
 Install Node.js, then install the locked dependencies:
 
 ```powershell
-cd C:\flutter_project\neet_pg_tools_flutter\telegram_miniapp_manager\bot
+Set-Location (Join-Path $workspace "telegram_miniapp_manager\bot")
 npm ci
+```
+
+The n8n workflows use this variable instead of a machine-specific path. Set it before
+starting n8n, then restart n8n so the process inherits it:
+
+```powershell
+setx TELEGRAM_MINIAPP_MANAGER_DIR (Join-Path $workspace "telegram_miniapp_manager")
 ```
 
 The Cloudflare account and KV namespace are configured in `wrangler.toml`. The Telegram token is not stored in Git. Add it after authenticating:
